@@ -2,10 +2,12 @@
   "compilerOptions": {
     "target": "es2015",
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "sourceMap": true,
     "jsx": "react",
     "strict": true,
+    "declaration": true
   },
   "include": [
     "./src/**/*.tsx"
