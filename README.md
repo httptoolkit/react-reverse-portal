@@ -1,12 +1,14 @@
-# react-reverse-portal [![Travis Build Status](https://img.shields.io/travis/httptoolkit/react-reverse-portal.svg)](https://travis-ci.org/httptoolkit/react-reverse-portal) [![Available on NPM](https://img.shields.io/npm/v/react-reverse-portal.svg)](https://npmjs.com/package/react-reverse-portal)
+# React-Reverse-Portal [![Travis Build Status](https://img.shields.io/travis/httptoolkit/react-reverse-portal.svg)](https://travis-ci.org/httptoolkit/react-reverse-portal) [![Available on NPM](https://img.shields.io/npm/v/react-reverse-portal.svg)](https://npmjs.com/package/react-reverse-portal)
 
 > _Part of [HTTP Toolkit](https://httptoolkit.tech): powerful tools for building, testing & debugging HTTP(S)_
 
 **Build an element once, move it anywhere**
 
-[React Portals](https://reactjs.org/docs/portals.html) let you render an element in a meaningful location within the React tree, but then place the output into a DOM node elsewhere.
+Added in React 16.0, React's built-in [portals](https://reactjs.org/docs/portals.html) let you render an element in a meaningful location within the React tree, but then place the output into a DOM node elsewhere.
 
 Reverse portals let you do the opposite: pull a rendered element from elsewhere into a meaningful location within your React tree. This allows you to reparent DOM nodes, so you can move React-rendered elements around your React tree and the DOM without re-rendering them. Reverse portals also allow you to pull a rendered node out of the tree entirely, and return it later, all without rerendering the node.
+
+(In a rush? Check out [the examples](https://httptoolkit.github.io/react-reverse-portal/))
 
 This is useful in a few cases:
 
@@ -24,11 +26,13 @@ This is useful in a few cases:
 
 ## Getting Started
 
+Install it:
+
 ```
 npm install react-reverse-portal
 ```
 
-Create a portal node and initiate it somewhere:
+Create a portal node, populate it with `InPortal`, and use it somewhere with `OutPortal`:
 
 ```js
 import * as portals from 'react-reverse-portal';
@@ -84,6 +88,8 @@ const ComponentB = (props) => {
     </div>;
 }
 ```
+
+**Check out [the examples](https://httptoolkit.github.io/react-reverse-portal/) to see this in action**
 
 ## What just happened?
 
