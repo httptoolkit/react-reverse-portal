@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "jsx": "react",
+    "strict": true,
+  },
+  "include": [
+    "./src/**/*.tsx"
+  ]
+}
