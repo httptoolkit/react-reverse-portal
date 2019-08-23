@@ -85,21 +85,16 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
         this.props.node.setPortalProps(propsForTarget);
     }
 
-    replacePlaceholder() {
+    componentDidMount() {
         const placeholder = this.placeholderNode.current!;
         placeholder.parentNode!.replaceChild(
             this.props.node,
             placeholder
         );
-    }
-
-    componentDidMount() {
-        this.replacePlaceholder();
         this.passPropsThroughPortal();
     }
 
     componentDidUpdate() {
-        this.replacePlaceholder();
         this.passPropsThroughPortal();
     }
 
