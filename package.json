@@ -14,7 +14,9 @@
     "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
     "pretest": "npm run build",
     "test": "echo \"It built ok, that'll do for now\"",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",
@@ -36,8 +38,13 @@
   },
   "homepage": "https://github.com/httptoolkit/react-reverse-portal#readme",
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@storybook/addon-storysource": "^5.1.11",
+    "@storybook/addons": "^5.1.11",
+    "@storybook/react": "^5.1.11",
     "@types/react": "^16.9.2",
     "@types/react-dom": "^16.9.0",
+    "babel-loader": "^8.0.6",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "rimraf": "^3.0.0",
