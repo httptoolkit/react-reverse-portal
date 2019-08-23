@@ -30,7 +30,7 @@ export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
     });
 };
 
-export class InPortal extends React.Component<InPortalProps, { nodeProps: {} }> {
+export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
 
     constructor(props: InPortalProps) {
         super(props);
@@ -71,7 +71,7 @@ export class InPortal extends React.Component<InPortalProps, { nodeProps: {} }> 
 
 type OutPortalProps<C extends Component<any>> = { node: PortalNode } & Partial<ComponentProps<C>>;
 
-export class OutPortal<C extends Component<any>> extends React.Component<OutPortalProps<C>> {
+export class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalProps<C>> {
 
     private placeholderNode = React.createRef<HTMLDivElement>();
 
@@ -85,22 +85,30 @@ export class OutPortal<C extends Component<any>> extends React.Component<OutPort
         this.props.node.setPortalProps(propsForTarget);
     }
 
-    componentDidMount() {
+    replacePlaceholder() {
         const placeholder = this.placeholderNode.current!;
         placeholder.parentNode!.replaceChild(
             this.props.node,
             placeholder
         );
+    }
+
+    componentDidMount() {
+        this.replacePlaceholder();
         this.passPropsThroughPortal();
     }
 
     componentDidUpdate() {
+        this.replacePlaceholder();
         this.passPropsThroughPortal();
     }
 
     componentWillUnmount() {
         const { node } = this.props;
-        node.parentNode!.removeChild(node);
+        node.parentNode.replaceChild(
+            this.placeholderNode.current,
+            node
+        );
         this.props.node.setPortalProps({});
     }
 
