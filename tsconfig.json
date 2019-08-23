@@ -1,15 +1,16 @@
 {
-  "compilerOptions": {
-    "target": "es2015",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "sourceMap": true,
-    "jsx": "react",
-    "strict": true,
-    "declaration": true
-  },
-  "include": [
-    "./src/**/*.tsx"
-  ]
+    "compilerOptions": {
+        "target": "es2015",
+        "composite": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "jsx": "react",
+        "strict": true,
+        "rootDir": "./src",
+        "declaration": true,
+        "declarationDir": "./dist"
+    },
+    "include": [
+        "./src/**/*.tsx"
+    ]
 }

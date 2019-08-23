@@ -2,17 +2,19 @@
   "name": "react-reverse-portal",
   "version": "0.1.0",
   "description": "Build an element once, move it anywhere",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/",
-    "src/",
+    "dist/**/*.{js,ts,map}",
+    "src/**/*",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
     "pretest": "npm run build",
-    "test": "echo \"It built ok, that'll do for now\""
+    "test": "echo \"It built ok, that'll do for now\"",
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -38,6 +40,7 @@
     "@types/react-dom": "^16.9.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "rimraf": "^3.0.0",
     "typescript": "^3.5.3"
   },
   "peerDependencies": {
