@@ -1,6 +1,6 @@
 {
   "name": "react-reverse-portal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Build an element once, move it anywhere",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
