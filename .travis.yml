@@ -1,3 +1,17 @@
 language: node_js
 node_js:
   - '10'
+
+script:
+  - npm test
+  - npm run build-storybook
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GH_TOKEN
+  local_dir: examples
+  repo: httptoolkit/react-reverse-portal
+  target_branch: gh-pages
+  on:
+    branch: master

@@ -31,3 +31,4 @@ node_modules/
 
 # Build output:
 dist/
+examples/

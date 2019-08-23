@@ -16,7 +16,7 @@
     "test": "echo \"It built ok, that'll do for now\"",
     "prepack": "npm run build",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook -o examples"
   },
   "repository": {
     "type": "git",
