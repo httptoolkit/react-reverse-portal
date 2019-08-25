@@ -17,8 +17,9 @@ This is useful in a few cases:
 * Your react elements have internal state, and you'd like to persist that state but render the element somewhere new.
 * Your DOM elements have built-in state (e.g. a playing `<video>` element), and you'd like to move the element elsewhere without losing that.
 * Your elements are expensive to render, and you'd like to render them once and then place/unplace them later (e.g. a reusable pool of expensive-to-render elements that can be shared among different parts of your application).
+* You want to define the contents of an element separately from where it actually appears in the tree, e.g. modals, breadcrumbs, etc (possible with normal portals, but made more flexible & declarative with reverse portals)
 
-In [HTTP Toolkit](https://httptoolkit.tech), for example, this is used to render [Monaco Editor](https://github.com/microsoft/monaco-editor) (an expensive-to-initialize rich text editor) only once, and then quickly & easily reuse the same editor to show the body of many different HTTP requests & responses in different places, without having to rebuild the component, making the UI much more responsive. Check out the full diff for that here: [httptoolkit-ui@8456eeca7a886b2d57b2a84bb4ecf299e20c77f8](https://github.com/httptoolkit/httptoolkit-ui/commit/8456eeca7a886b2d57b2a84bb4ecf299e20c77f8).
+In [HTTP Toolkit](https://httptoolkit.tech) for example, this is used to render [Monaco Editor](https://github.com/microsoft/monaco-editor) (an expensive-to-initialize rich text editor) only once, and then quickly & easily reuse the same editor to show the body of many different HTTP requests & responses in different places, without having to rebuild the component, making the UI much more responsive. Check out the full diff to implement that here: [httptoolkit-ui@8456eeca7a886b2d57b2a84bb4ecf299e20c77f8](https://github.com/httptoolkit/httptoolkit-ui/commit/8456eeca7a886b2d57b2a84bb4ecf299e20c77f8).
 
 ## Features
 
