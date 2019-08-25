@@ -1,6 +1,8 @@
-# React-Reverse-Portal [![Travis Build Status](https://img.shields.io/travis/httptoolkit/react-reverse-portal.svg)](https://travis-ci.org/httptoolkit/react-reverse-portal) [![Available on NPM](https://img.shields.io/npm/v/react-reverse-portal.svg)](https://npmjs.com/package/react-reverse-portal)
+# React-Reverse-Portal
 
 > _Part of [HTTP Toolkit](https://httptoolkit.tech): powerful tools for building, testing & debugging HTTP(S)_
+
+![Apache 2.0 licensed](https://img.shields.io/npm/l/react-reverse-portal) ![Tiny bundle size](https://img.shields.io/bundlephobia/minzip/react-reverse-portal) [![Travis Build Status](https://img.shields.io/travis/httptoolkit/react-reverse-portal.svg)](https://travis-ci.org/httptoolkit/react-reverse-portal) [![Available on NPM](https://img.shields.io/npm/v/react-reverse-portal.svg)](https://npmjs.com/package/react-reverse-portal)
 
 **Build an element once, move it anywhere**
 
@@ -15,6 +17,8 @@ This is useful in a few cases:
 * Your react elements have internal state, and you'd like to persist that state but render the element somewhere new.
 * Your DOM elements have built-in state (e.g. a playing `<video>` element), and you'd like to move the element elsewhere without losing that.
 * Your elements are expensive to render, and you'd like to render them once and then place/unplace them later (e.g. a reusable pool of expensive-to-render elements that can be shared among different parts of your application).
+
+In [HTTP Toolkit](https://httptoolkit.tech), for example, this is used to render [Monaco Editor](https://github.com/microsoft/monaco-editor) (an expensive-to-initialize rich text editor) only once, and then quickly & easily reuse the same editor to show the body of many different HTTP requests & responses in different places, without having to rebuild the component, making the UI much more responsive. Check out the full diff for that here: [httptoolkit-ui@8456eeca7a886b2d57b2a84bb4ecf299e20c77f8](https://github.com/httptoolkit/httptoolkit-ui/commit/8456eeca7a886b2d57b2a84bb4ecf299e20c77f8).
 
 ## Features
 
