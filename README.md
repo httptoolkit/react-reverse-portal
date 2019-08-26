@@ -132,3 +132,30 @@ It extra props to the InPortal (using the extra functionality we've attached to 
 * Reverse portals tie rebuilding of the contents of the portal to InPortal (where it's defined), rather than the parent of the OutPortal (where it appears in the tree). That's great (that's the whole point really), but the contents of the InPortal will still be rebuilt anytime the InPortal itself is, e.g. if the InPortal's parent is rebuilt.
 * Be aware that if you call `createPortalNode` in the render method of the parent of an InPortal, you'll get a different node to render into each time, and this will cause unnecessary rerenders, one every time the parent updates. It's generally better to create the node once and persist it, either using the useMemo hook, or in the initial construction of your class component.
 * By default, the types for nodes, InPortals and OutPortals allow any props and any components. Pass a component type to them to be more explicit and enforce prop types, e.g. `createPortalNode<MyComponent>`, `<portals.InPortal<MyComponent>>`, `<portals.OutPortal<MyComponent>>`.
+
+## Contributing
+
+Like this project and want to help?
+ 
+For starters, open source projects live on Github stars: star this repo and share the love :star:
+ 
+### Bug reports & questions
+ 
+Want to ask a question? Feel free; just [file an issue](https://github.com/httptoolkit/react-reverse-portal/issues/new).
+ 
+Hitting a bug? File an issue, just make sure to include the React & ReactDOM versions you're using, the browser that's showing the issue, and a clear example so we can reproduce the problem.
+ 
+### Feature suggestions & changes
+ 
+Want to contribute changes directly, to add features, fix issues or document better? Great! Contributions from everybody are very welcome. If your change is small and you're pretty sure it'll be clearly wanted feel free to just open a PR directly. If you're not 100% sure, you're always welcome to open an issue and ask!
+
+The structure in the codebase is fairly simple:
+* `src/` contains the source files (which are later compiled into `dist/`). The source is written in TypeScript.
+* `stories/` contains the [react storybook](https://storybook.js.org/) code, which is later compiled to & automatically published from `examples/` to https://httptoolkit.github.io/react-reverse-portal/
+
+To actually make your changes, you just need to set up the codebase:
+
+* `npm install`
+* `npm run build` - compiles the code
+* `npm test` - no tests for now, so this just checks the code compiles (it's the same as `build`). Tests welcome!
+* `npm run storybook` - starts up the storybook and opens it in your browser. You'll probably need to `npm run build` first, and again later if you make changes in `src/`.
