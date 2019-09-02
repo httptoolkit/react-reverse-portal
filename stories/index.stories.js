@@ -149,7 +149,7 @@ storiesOf('Portals', module)
         const MyExpensiveComponent = () => 'expensive!';
 
         const MyComponent = (props) => {
-            const portalNode = React.useMemo(() => portals.createPortalNode());
+            const portalNode = React.useMemo(() => portals.createPortalNode(), []);
 
             return <div>
                 {/*

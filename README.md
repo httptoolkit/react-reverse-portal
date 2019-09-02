@@ -43,7 +43,7 @@ Create a portal node, populate it with `InPortal`, and use it somewhere with `Ou
 import * as portals from 'react-reverse-portal';
 
 const MyComponent = (props) => {
-    const portalNode = React.useMemo(() => portals.createPortalNode());
+    const portalNode = React.useMemo(() => portals.createPortalNode(), []);
 
     return <div>
         {/*
