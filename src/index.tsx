@@ -69,7 +69,9 @@ export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}
     }
 }
 
-type OutPortalProps<C extends Component<any>> = { node: PortalNode } & Partial<ComponentProps<C>>;
+type OutPortalProps<C extends Component<any>> = {
+    node: PortalNode<C>
+} & Partial<ComponentProps<C>>;
 
 export class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalProps<C>> {
 
