@@ -11,6 +11,12 @@ export interface PortalNode<C extends Component<any> = Component<any>> extends H
     setPortalProps(p: ComponentProps<C>): void;
     // Used to track props set before the InPortal hooks setPortalProps
     getInitialPortalProps(): ComponentProps<C>;
+    // Move the node from wherever it is, to this parent, replacing the placeholder
+    mount(newParent: Node, placeholder: Node): void;
+    // If mounted, unmount the node and put the initial placeholder back
+    // If an expected placeholder is provided, only unmount if that's still that was the
+    // latest placeholder we replaced. This avoids some race conditions.
+    unmount(expectedPlaceholder?: Node): void;
 }
 
 interface InPortalProps {
@@ -20,14 +26,52 @@ interface InPortalProps {
 
 export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
-    return Object.assign(document.createElement('div'), {
+
+    let parent: Node | undefined;
+    let lastPlaceholder: Node | undefined;
+
+    const portalNode = Object.assign(document.createElement('div'), {
         setPortalProps: (props: ComponentProps<C>) => {
             initialProps = props;
         },
         getInitialPortalProps: () => {
             return initialProps;
+        },
+        mount: (newParent: Node, newPlaceholder: Node) => {
+            if (newPlaceholder === lastPlaceholder) {
+                // Already mounted - noop.
+                return;
+            }
+            portalNode.unmount();
+
+            newParent.replaceChild(
+                portalNode,
+                newPlaceholder
+            );
+
+            parent = newParent;
+            lastPlaceholder = newPlaceholder;
+        },
+        unmount: (expectedPlaceholder?: Node) => {
+            if (expectedPlaceholder && expectedPlaceholder !== lastPlaceholder) {
+                // Skip unmounts for placeholders that aren't currently mounted
+                // They will have been automatically unmounted already by a subsequent mount()
+                return;
+            }
+
+            if (parent && lastPlaceholder) {
+                parent.replaceChild(
+                    lastPlaceholder,
+                    portalNode
+                );
+
+                parent = undefined;
+                lastPlaceholder = undefined;
+            }
         }
     });
+
+    return portalNode;
 };
 
 export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
@@ -88,28 +132,27 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
     }
 
     componentDidMount() {
+        const node = this.props.node as PortalNode<C>;
+
         const placeholder = this.placeholderNode.current!;
-        placeholder.parentNode!.replaceChild(
-            this.props.node,
-            placeholder
-        );
+        const parent = placeholder.parentNode!;
+        node.mount(parent, placeholder);
         this.passPropsThroughPortal();
     }
 
     componentDidUpdate() {
+        // We re-mount on update, just in case we were unmounted (e.g. by
+        // a second OutPortal, which has now been removed)
+        const node = this.props.node as PortalNode<C>;
+        const placeholder = this.placeholderNode.current!;
+        const parent = placeholder.parentNode!;
+        node.mount(parent, placeholder);
         this.passPropsThroughPortal();
     }
 
     componentWillUnmount() {
         const node = this.props.node as PortalNode<C>;
-
-        if (node.parentNode) {
-            node.parentNode.replaceChild(
-                this.placeholderNode.current!,
-                node
-            );
-            this.props.node.setPortalProps({});
-        }
+        node.unmount(this.placeholderNode.current!);
     }
 
     render() {

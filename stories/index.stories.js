@@ -145,6 +145,48 @@ storiesOf('Portals', module)
             </div>
         });
     })
+    .add('renders reliably, even with frequent changes and multiple portals', () => {
+        const portalNode = portals.createPortalNode('div');
+
+        const Target = (p) => p.value.toString();
+
+        const Parent = () => {
+            const [state, setState] = React.useState(false);
+
+            // Change frequently, to hunt for race conditions. On leaving this story, this might
+            // complain about calling setState after unmount - that's totally fine, we don't care.
+            // There should be no other errors though.
+            setTimeout(() => {
+                setState(!state);
+            }, 100);
+
+            return <div>
+                Portal flickers between 2 / 3 / nothing here:
+                { state
+                    // What happens if you render the same portal twice?
+                    ? <>
+                        <portals.OutPortal node={portalNode} value={1} />
+                        <portals.OutPortal node={portalNode} value={2} />
+                    </>
+                    // What happens if you switch from 2 portals to 1, to 2 to zero, at random?
+                    : Math.random() > 0.5
+                        ? <portals.OutPortal node={portalNode} value={3} />
+                        : null
+                }
+            </div>;
+        }
+
+        return <div>
+            <div>
+                Portal defined here:
+                <portals.InPortal node={portalNode}>
+                    <Target value='unmounted' />
+                </portals.InPortal>
+            </div>
+
+            <Parent />
+        </div>;
+    })
     .add('Example from README', () => {
         const MyExpensiveComponent = () => 'expensive!';
 
