@@ -101,12 +101,15 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
     }
 
     componentWillUnmount() {
-        const { node } = this.props;
-        node.parentNode.replaceChild(
-            this.placeholderNode.current,
-            node
-        );
-        this.props.node.setPortalProps({});
+        const node = this.props.node as PortalNode<C>;
+
+        if (node.parentNode) {
+            node.parentNode.replaceChild(
+                this.placeholderNode.current!,
+                node
+            );
+            this.props.node.setPortalProps({});
+        }
     }
 
     render() {
