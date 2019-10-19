@@ -4,6 +4,7 @@
   "description": "Build an element once, move it anywhere",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "browser": "dist/web/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*.{js,ts,map}",
@@ -11,7 +12,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
+    "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && npm run build-web",
+    "build-web": "BABEL_ENV=web babel dist/esm --config-file=./babel.config.js --out-dir=dist/web",
     "pretest": "npm run build",
     "test": "echo \"It built ok, that'll do for now\"",
     "prepack": "npm run build",
@@ -38,6 +40,7 @@
   },
   "homepage": "https://github.com/httptoolkit/react-reverse-portal#readme",
   "devDependencies": {
+    "@babel/cli": "^7.6.4",
     "@babel/core": "^7.5.5",
     "@storybook/addon-storysource": "^5.1.11",
     "@storybook/addons": "^5.1.11",
