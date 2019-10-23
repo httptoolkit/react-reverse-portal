@@ -4,6 +4,7 @@
   "description": "Build an element once, move it anywhere",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "browser": "dist/web/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*.{js,ts,map}",
@@ -11,7 +12,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
+    "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.web.json",
     "pretest": "npm run build",
     "test": "echo \"It built ok, that'll do for now\"",
     "prepack": "npm run build",
