@@ -12,7 +12,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.es5.json",
+    "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.web.json",
     "pretest": "npm run build",
     "test": "echo \"It built ok, that'll do for now\"",
     "prepack": "npm run build",
