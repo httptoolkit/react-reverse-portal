@@ -145,6 +145,45 @@ storiesOf('Portals', module)
             </div>
         });
     })
+    .add('can switch between portals safely', () => {
+        const portalNode1 = portals.createPortalNode();
+        const portalNode2 = portals.createPortalNode();
+
+        const Counter = () => {
+            const [count, setCount] = React.useState(0);
+
+            return <div>
+                Count is { count }
+                <button onClick={() => setCount(count + 1)}>
+                    +1
+                </button>
+            </div>;
+        };
+
+        return React.createElement(() => {
+            const [isPortalSwitched, switchPortal] = React.useState(false);
+
+            let portalNode = isPortalSwitched ? portalNode2 : portalNode1;
+
+            return <div>
+                <portals.InPortal node={portalNode1}>
+                    <Counter />
+                </portals.InPortal>
+                <portals.InPortal node={portalNode2}>
+                    <Counter />
+                </portals.InPortal>
+
+                <button onClick={() => switchPortal(!isPortalSwitched)}>
+                    Click to swap the portal shown
+                </button>
+
+                <hr/>
+
+                <p>Inner OutPortal:</p>
+                <portals.OutPortal node={portalNode} />
+            </div>
+        });
+    })
     .add('renders reliably, even with frequent changes and multiple portals', () => {
         const portalNode = portals.createPortalNode('div');
 

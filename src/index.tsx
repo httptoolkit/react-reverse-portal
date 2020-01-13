@@ -120,6 +120,7 @@ type OutPortalProps<C extends Component<any>> = {
 export class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalProps<C>> {
 
     private placeholderNode = React.createRef<HTMLDivElement>();
+    private currentPortalNode?: PortalNode<C>;
 
     constructor(props: OutPortalProps<C>) {
         super(props);
@@ -133,6 +134,7 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
 
     componentDidMount() {
         const node = this.props.node as PortalNode<C>;
+        this.currentPortalNode = node;
 
         const placeholder = this.placeholderNode.current!;
         const parent = placeholder.parentNode!;
@@ -144,6 +146,13 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
         // We re-mount on update, just in case we were unmounted (e.g. by
         // a second OutPortal, which has now been removed)
         const node = this.props.node as PortalNode<C>;
+
+        // If we're switching portal nodes, we need to clean up the current one first.
+        if (this.currentPortalNode && node !== this.currentPortalNode) {
+            this.currentPortalNode.unmount();
+            this.currentPortalNode = node;
+        }
+
         const placeholder = this.placeholderNode.current!;
         const parent = placeholder.parentNode!;
         node.mount(parent, placeholder);
