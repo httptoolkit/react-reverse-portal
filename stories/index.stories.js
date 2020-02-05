@@ -226,6 +226,28 @@ storiesOf('Portals', module)
             <Parent />
         </div>;
     })
+    .add('Works with SVGs', () => {
+        const portalNode = portals.createPortalNode();
+
+        // From https://github.com/httptoolkit/react-reverse-portal/issues/2
+        return <div>
+            <svg>
+                <rect x={0} y={0} width={300} height={50} fill="gray"></rect>
+                <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
+                <svg x={30} y={10}>
+                    <portals.InPortal node={portalNode}>
+                        <text alignmentBaseline="text-before-edge" fill="red">
+                            test
+                        </text>
+                    </portals.InPortal>
+                </svg>
+                <svg x={30} y={70}>
+                    <portals.OutPortal node={portalNode} />
+                </svg>
+            </svg>
+        </div>
+
+    })
     .add('Example from README', () => {
         const MyExpensiveComponent = () => 'expensive!';
 
