@@ -24,7 +24,7 @@ interface InPortalProps {
     children: React.ReactNode;
 }
 
-export const createPortalNode = <C extends Component<any>>(tagName :string = 'div'): PortalNode<C> => {
+export const createPortalNode = <C extends Component<any>>(tagName: string = 'div'): PortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
 
     let parent: Node | undefined;
@@ -44,10 +44,17 @@ export const createPortalNode = <C extends Component<any>>(tagName :string = 'di
             }
             portalNode.unmount();
 
-            newParent.replaceChild(
-                portalNode,
-                newPlaceholder
-            );
+            // If either the PortalNode or its content is an SVG element, we need to treat it differently
+            if (portalNode instanceof SVGElement || newPlaceholder instanceof SVGElement) {
+                // replaceChild does not work well for SVG elements: it will rearrange the dom
+                // properly but does not render as expected.
+                (newPlaceholder as HTMLElement).outerHTML = portalNode.innerHTML;
+            } else {
+                newParent.replaceChild(
+                    portalNode,
+                    newPlaceholder
+                );
+            }
 
             parent = newParent;
             lastPlaceholder = newPlaceholder;
@@ -60,10 +67,15 @@ export const createPortalNode = <C extends Component<any>>(tagName :string = 'di
             }
 
             if (parent && lastPlaceholder) {
-                parent.replaceChild(
-                    lastPlaceholder,
-                    portalNode
-                );
+                // If either the PortalNode or its content is an SVG element, we need to treat it differently
+                if (portalNode instanceof SVGElement || lastPlaceholder instanceof SVGElement) {
+                    (portalNode as HTMLElement).innerHTML = '';
+                } else {
+                    parent.replaceChild(
+                        lastPlaceholder,
+                        portalNode
+                    );
+                }
 
                 parent = undefined;
                 lastPlaceholder = undefined;
@@ -165,7 +177,8 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
     }
 
     render() {
-        const { tagName: NodeTagName } = this.props.node;
+        const { tagName } = this.props.node;
+        const NodeTagName = tagName.toLowerCase();
 
         // Render a placeholder to the DOM, so we can get a reference into
         // our location in the DOM, and swap it out for the portaled node.
