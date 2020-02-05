@@ -24,13 +24,13 @@ interface InPortalProps {
     children: React.ReactNode;
 }
 
-export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
+export const createPortalNode = <C extends Component<any>>(tagName :string = 'div'): PortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
 
     let parent: Node | undefined;
     let lastPlaceholder: Node | undefined;
 
-    const portalNode = Object.assign(document.createElement('div'), {
+    const portalNode = Object.assign(document.createElement(tagName), {
         setPortalProps: (props: ComponentProps<C>) => {
             initialProps = props;
         },
@@ -165,9 +165,11 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
     }
 
     render() {
+        const { tagName: NodeTagName } = this.props.node;
+
         // Render a placeholder to the DOM, so we can get a reference into
         // our location in the DOM, and swap it out for the portaled node.
-        return <div ref={this.placeholderNode} />;
+        return <NodeTagName ref={this.placeholderNode} />;
     }
 
 }

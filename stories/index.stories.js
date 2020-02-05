@@ -227,7 +227,7 @@ storiesOf('Portals', module)
         </div>;
     })
     .add('Works with SVGs', () => {
-        const portalNode = portals.createPortalNode();
+        const portalNode = portals.createPortalNode('text');
 
         // From https://github.com/httptoolkit/react-reverse-portal/issues/2
         return <div>
