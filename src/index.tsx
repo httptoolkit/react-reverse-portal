@@ -1,11 +1,28 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+console.log('React = ', React)
+console.log('ReactDOM = ', ReactDOM)
+
+// These namespaces come from react-dom, which does not export them publicly
+// https://github.com/facebook/react/blob/b87aabdfe1b7461e7331abb3601d9e6bb27544bc/packages/react-dom/src/shared/DOMNamespaces.js#L8-L16
+const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
+const MATH_NAMESPACE = 'http://www.w3.org/1998/Math/MathML';
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+export const Namespaces = {
+    html: HTML_NAMESPACE,
+    mathml: MATH_NAMESPACE,
+    svg: SVG_NAMESPACE,
+};
+
 type Component<P> = React.Component<P> | React.ComponentType<P>;
 
 type ComponentProps<C extends Component<any>> = C extends Component<infer P> ? P : never;
 
-export interface PortalNode<C extends Component<any> = Component<any>> extends HTMLElement {
+type PortalNodeElement = HTMLElement | SVGElement;
+
+export interface PortalNode<C extends Component<any> = Component<any>> {
+    element: PortalNodeElement,
     // Used by the out portal to send props back to the real element
     // Hooked by InPortal to become a state update (and thus rerender)
     setPortalProps(p: ComponentProps<C>): void;
@@ -24,37 +41,60 @@ interface InPortalProps {
     children: React.ReactNode;
 }
 
-export const createPortalNode = <C extends Component<any>>(tagName: string = 'div'): PortalNode<C> => {
+export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
 
     let parent: Node | undefined;
     let lastPlaceholder: Node | undefined;
 
-    const portalNode = Object.assign(document.createElement(tagName), {
+    const portalNode: PortalNode = {
+        // @ts-ignore
+        element: null,
+        // element: document.createElement('div'),
         setPortalProps: (props: ComponentProps<C>) => {
             initialProps = props;
         },
         getInitialPortalProps: () => {
             return initialProps;
         },
-        mount: (newParent: Node, newPlaceholder: Node) => {
+        mount: (newParent: PortalNodeElement, newPlaceholder: PortalNodeElement) => {
             if (newPlaceholder === lastPlaceholder) {
                 // Already mounted - noop.
                 return;
             }
             portalNode.unmount();
 
-            // If either the PortalNode or its content is an SVG element, we need to treat it differently
-            if (portalNode instanceof SVGElement || newPlaceholder instanceof SVGElement) {
-                // replaceChild does not work well for SVG elements: it will rearrange the dom
-                // properly but does not render as expected.
-                (newPlaceholder as HTMLElement).outerHTML = portalNode.innerHTML;
-            } else {
-                newParent.replaceChild(
-                    portalNode,
-                    newPlaceholder
-                );
+            console.log('portalNode.mount()', {
+                newParent, newPlaceholder,
+                parent, lastPlaceholder,
+                portalNode,
+            });
+
+            if (!portalNode.element) {
+                if (newParent instanceof SVGElement) {
+                    portalNode.element = document.createElementNS(SVG_NAMESPACE, newParent.tagName);
+                } else {
+                    portalNode.element = document.createElement(newParent.tagName);
+                }
+
+                console.log('CREATED portalNode.element!!!', portalNode.element);
+
+            } else if (newParent.tagName !== portalNode.element.tagName) {
+                const oldElement = portalNode.element;
+
+                if (newParent instanceof SVGElement) {
+                    portalNode.element = document.createElementNS(SVG_NAMESPACE, newParent.tagName);
+                } else {
+                    portalNode.element = document.createElement(newParent.tagName);
+                }
+
+                console.log('REPLACED portalNode.element!!!', oldElement, ' -> ', portalNode.element)
             }
+
+            newParent.replaceChild(
+                portalNode.element,
+                newPlaceholder
+            );
 
             parent = newParent;
             lastPlaceholder = newPlaceholder;
@@ -67,21 +107,21 @@ export const createPortalNode = <C extends Component<any>>(tagName: string = 'di
             }
 
             if (parent && lastPlaceholder) {
-                // If either the PortalNode or its content is an SVG element, we need to treat it differently
-                if (portalNode instanceof SVGElement || lastPlaceholder instanceof SVGElement) {
-                    (portalNode as HTMLElement).innerHTML = '';
-                } else {
+                if (portalNode.element) {
                     parent.replaceChild(
                         lastPlaceholder,
-                        portalNode
+                        portalNode.element
                     );
-                }
 
-                parent = undefined;
-                lastPlaceholder = undefined;
+                    parent = undefined;
+                    lastPlaceholder = undefined;
+                } else {
+                    // Panic!
+                    throw new Error('No element available, in portalNode.mount!');
+                }
             }
         }
-    });
+    };
 
     return portalNode;
 };
@@ -113,14 +153,19 @@ export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}
     }
 
     render() {
+        console.log('InPortal.render()', this);
         const { children, node } = this.props;
+        console.log('InPortal.render()...node = ', node);
+        console.log('InPortal.render()...node.element = ', node.element);
+
+        if (!node.element) return null;
 
         return ReactDOM.createPortal(
             React.Children.map(children, (child) => {
                 if (!React.isValidElement(child)) return child;
                 return React.cloneElement(child, this.state.nodeProps)
             }),
-            node
+            node.element
         );
     }
 }
@@ -177,12 +222,11 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
     }
 
     render() {
-        const { tagName } = this.props.node;
-        const NodeTagName = tagName.toLowerCase();
+        console.log('OutPortal.render()', this);
 
         // Render a placeholder to the DOM, so we can get a reference into
         // our location in the DOM, and swap it out for the portaled node.
-        return <NodeTagName ref={this.placeholderNode} />;
+        return <div ref={this.placeholderNode} />;
     }
 
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDom from 'react-dom';
 
 import { storiesOf } from '@storybook/react';
 
@@ -11,7 +12,7 @@ const Container = (props) =>
 
 storiesOf('Portals', module)
     .add('render things in different places', () => {
-        const portalNode = portals.createPortalNode('span');
+        const portalNode = portals.createPortalNode();
 
         return <div>
             <div>
@@ -185,7 +186,7 @@ storiesOf('Portals', module)
         });
     })
     .add('renders reliably, even with frequent changes and multiple portals', () => {
-        const portalNode = portals.createPortalNode('div');
+        const portalNode = portals.createPortalNode();
 
         const Target = (p) => p.value.toString();
 
@@ -227,7 +228,7 @@ storiesOf('Portals', module)
         </div>;
     })
     .add('works with SVGs', () => {
-        const portalNode = portals.createPortalNode('text');
+        const portalNode = portals.createPortalNode();
 
         // From https://github.com/httptoolkit/react-reverse-portal/issues/2
         return <div>
@@ -236,7 +237,7 @@ storiesOf('Portals', module)
                 <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
                 <svg x={30} y={10}>
                     <portals.InPortal node={portalNode}>
-                        <text alignmentBaseline="text-before-edge" fill="red">
+                        <text alignmentBaseline="text-before-edge" dominantBaseline="hanging" fill="red">
                             test
                         </text>
                     </portals.InPortal>
@@ -247,6 +248,68 @@ storiesOf('Portals', module)
             </svg>
         </div>
 
+    })
+    .add('can move content around within SVGs', () => {
+        const portalNode = portals.createPortalNode('text');
+
+        return React.createElement(() => {
+            const [inFirstSvg, setSvgToUse] = React.useState(false);
+
+            return <div>
+                <button onClick={() => setSvgToUse(!inFirstSvg)}>
+                    Click to move the OutPortal within the SVG
+                </button>
+
+                <svg>
+                    <portals.InPortal node={portalNode}>
+                        <text alignmentBaseline="text-before-edge" dominantBaseline="hanging" fill="red">
+                            test
+                        </text>
+                    </portals.InPortal>
+
+                    <rect x={0} y={0} width={300} height={50} fill="gray"></rect>
+                    <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
+
+                    <svg x={30} y={10}>
+                        { inFirstSvg && <portals.OutPortal node={portalNode} /> }
+                    </svg>
+                    <svg x={30} y={70}>
+                        { !inFirstSvg && <portals.OutPortal node={portalNode} /> }
+                    </svg>
+                </svg>
+            </div>
+        });
+    })
+    .add('persist DOM while moving within SVGs', () => {
+        const portalNode = portals.createPortalNode('text');
+
+        return React.createElement(() => {
+            const [inFirstSvg, setSvgToUse] = React.useState(false);
+
+            return <div>
+                <button onClick={() => setSvgToUse(!inFirstSvg)}>
+                    Click to move the OutPortal within the SVG
+                </button>
+
+                <svg>
+                    <portals.InPortal node={portalNode}>
+                        <foreignObject width="300" height="50">
+                            <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop />
+                        </foreignObject>
+                    </portals.InPortal>
+
+                    <rect x={0} y={0} width={300} height={50} fill="gray"></rect>
+                    <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
+
+                    <svg x={30} y={10}>
+                        { inFirstSvg && <portals.OutPortal node={portalNode} /> }
+                    </svg>
+                    <svg x={30} y={70}>
+                        { !inFirstSvg && <portals.OutPortal node={portalNode} /> }
+                    </svg>
+                </svg>
+            </div>
+        })
     })
     .add('Example from README', () => {
         const MyExpensiveComponent = () => 'expensive!';
