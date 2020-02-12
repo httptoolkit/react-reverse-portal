@@ -13,7 +13,6 @@
   ],
   "scripts": {
     "build": "rimraf dist/ && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.web.json",
-    "build:watch": "tsc -p tsconfig.esm.json --watch",
     "pretest": "npm run build",
     "test": "echo \"It built ok, that'll do for now\"",
     "prepare": "npm run build",
