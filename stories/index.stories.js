@@ -11,32 +11,19 @@ const Container = (props) =>
 
 storiesOf('Portals', module)
     .add('render things in different places', () => {
-        const portalNode1 = portals.createPortalNode();
-        const portalNode2 = portals.createPortalNode();
+        const portalNode = portals.createPortalNode();
 
         return <div>
             <div>
-                Portal 1 defined here:
-                <portals.InPortal node={portalNode1}>
+                Portal defined here:
+                <portals.InPortal node={portalNode}>
                     Hi!
                 </portals.InPortal>
             </div>
 
             <div>
-                Portal 1 renders here:
-                <portals.OutPortal node={portalNode1} />
-            </div>
-
-            <div>
-                Portal 2 renders here:
-                <portals.OutPortal node={portalNode2} />
-            </div>
-
-            <div>
-                Portal 2 defined here:
-                <portals.InPortal node={portalNode2}>
-                    Hi!
-                </portals.InPortal>
+                Portal renders here:
+                <portals.OutPortal node={portalNode} />
             </div>
         </div>;
     })
@@ -179,7 +166,7 @@ storiesOf('Portals', module)
             let portalNode = isPortalSwitched ? portalNode2 : portalNode1;
 
             return <div>
-                <portals.InPortal node={portalNode1}>
+                <portals.InPortal node={portalNode}>
                     <Counter />
                 </portals.InPortal>
                 <portals.InPortal node={portalNode2}>
@@ -240,44 +227,24 @@ storiesOf('Portals', module)
         </div>;
     })
     .add('works with SVGs', () => {
-        const portalNode1 = portals.createPortalNode();
-        const portalNode2 = portals.createPortalNode();
+        const portalNode = portals.createPortalNode();
 
         // From https://github.com/httptoolkit/react-reverse-portal/issues/2
         return <div>
-            <div>
             <svg>
                 <rect x={0} y={0} width={300} height={50} fill="gray"></rect>
                 <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
                 <svg x={30} y={10}>
-                    <portals.InPortal node={portalNode1}>
+                    <portals.InPortal node={portalNode}>
                         <text alignmentBaseline="text-before-edge" dominantBaseline="hanging" fill="red">
                             test
                         </text>
                     </portals.InPortal>
                 </svg>
                 <svg x={30} y={70}>
-                    <portals.OutPortal node={portalNode1} />
+                    <portals.OutPortal node={portalNode} />
                 </svg>
             </svg>
-
-            </div>
-            <div>
-            <svg>
-                <rect x={0} y={0} width={300} height={50} fill="gray"></rect>
-                <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
-                <svg x={30} y={70}>
-                    <portals.OutPortal node={portalNode2} />
-                </svg>
-                <svg x={30} y={10}>
-                    <portals.InPortal node={portalNode2}>
-                        <text alignmentBaseline="text-before-edge" dominantBaseline="hanging" fill="red">
-                            test
-                        </text>
-                    </portals.InPortal>
-                </svg>
-            </svg>
-            </div>
         </div>
 
     })
@@ -324,23 +291,23 @@ storiesOf('Portals', module)
                 </button>
 
                 <div>
-                <svg width={600} height={800}>
-                    <portals.InPortal node={portalNode}>
-                        <foreignObject width="500" height="400">
-                            <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop />
-                        </foreignObject>
-                    </portals.InPortal>
+                    <svg width={600} height={800}>
+                        <portals.InPortal node={portalNode}>
+                            <foreignObject width="500" height="400">
+                                <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop />
+                            </foreignObject>
+                        </portals.InPortal>
 
-                    <rect x={0} y={0} width={600} height={400} fill="gray"></rect>
-                    <rect x={0} y={400} width={600} height={400} fill="lightblue"></rect>
+                        <rect x={0} y={0} width={600} height={400} fill="gray"></rect>
+                        <rect x={0} y={400} width={600} height={400} fill="lightblue"></rect>
 
-                    <svg x={30} y={10}>
-                        { inFirstSvg && <portals.OutPortal node={portalNode} /> }
+                        <svg x={30} y={10}>
+                            { inFirstSvg && <portals.OutPortal node={portalNode} /> }
+                        </svg>
+                        <svg x={30} y={410}>
+                            { !inFirstSvg && <portals.OutPortal node={portalNode} /> }
+                        </svg>
                     </svg>
-                    <svg x={30} y={410}>
-                        { !inFirstSvg && <portals.OutPortal node={portalNode} /> }
-                    </svg>
-                </svg>
                 </div>
             </div>
         })

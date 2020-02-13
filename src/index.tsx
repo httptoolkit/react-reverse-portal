@@ -14,7 +14,7 @@ type PortalNodeElement = HTMLElement | SVGElement;
 export interface PortalNode<C extends Component<any> = Component<any>> {
     // The dom element used for the React portal. Created on portal mount.
     element: PortalNodeElement | null,
-    callbackFn: (() => void) | null,
+    onReady: (() => void) | null,
     // Used by the out portal to send props back to the real element
     // Hooked by InPortal to become a state update (and thus rerender)
     setPortalProps(p: ComponentProps<C>): void;
@@ -41,7 +41,7 @@ export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
 
     const portalNode: PortalNode = {
         element: null,
-        callbackFn: null,
+        onReady: null,
         setPortalProps: (props: ComponentProps<C>) => {
             initialProps = props;
         },
@@ -95,13 +95,13 @@ export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
     return portalNode;
 };
 
-export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}, outPortalCallback: boolean }> {
+export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}, onReadyFired: boolean }> {
 
     constructor(props: InPortalProps) {
         super(props);
         this.state = {
             nodeProps: this.props.node.getInitialPortalProps(),
-            outPortalCallback: false,
+            onReadyFired: false,
         };
     }
 
@@ -127,9 +127,9 @@ export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}
 
         if (!node.element) {
             // The OutPortal has not yet determined whether or not we're in a special namespace like SVG:
-            // delay our rendering for now, and attach a callbackFn which the OutPortal can use to
+            // delay our rendering for now, and attach an onReady callback which the OutPortal can use to
             // trigger a rerender once we're ready
-            node.callbackFn = () => this.setState({ outPortalCallback: true })
+            node.onReady = () => this.setState({ onReadyFired: true })
             return null;
         }
 
@@ -161,11 +161,11 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
         const propsForTarget = Object.assign({}, this.props, { node: undefined });
         this.props.node.setPortalProps(propsForTarget);
 
-        if (this.props.node.callbackFn) {
+        if (this.props.node.onReady) {
             // There's an InPortal which is waiting on this OutPortal:
             // rerender it now that the OutPortal and portalNode are ready
-            this.props.node.callbackFn();
-            this.props.node.callbackFn = null;
+            this.props.node.onReady();
+            this.props.node.onReady = null;
         }
     }
 
