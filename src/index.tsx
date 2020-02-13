@@ -93,12 +93,13 @@ export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
     return portalNode;
 };
 
-export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
+export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}, isFirstRender: boolean }> {
 
     constructor(props: InPortalProps) {
         super(props);
         this.state = {
-            nodeProps: this.props.node.getInitialPortalProps()
+            nodeProps: this.props.node.getInitialPortalProps(),
+            isFirstRender: true,
         };
     }
 
@@ -122,17 +123,20 @@ export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}
     render() {
         const { children, node } = this.props;
 
-        if (node.element) {
-            return ReactDOM.createPortal(
-                React.Children.map(children, (child) => {
-                    if (!React.isValidElement(child)) return child;
-                    return React.cloneElement(child, this.state.nodeProps)
-                }),
-                node.element
-            );
+        if (!node.element && this.state.isFirstRender) {
+            // If the InPortal is rendered before the OutPortal then the portal element won't exist yet:
+            // wait for it to initialize and then try again
+            setTimeout(() => this.setState({ isFirstRender: false }))
+            return null;
         }
-        // Else: the portalNode has not been mounted yet
-        return null;
+
+        return ReactDOM.createPortal(
+            React.Children.map(children, (child) => {
+                if (!React.isValidElement(child)) return child;
+                return React.cloneElement(child, this.state.nodeProps)
+            }),
+            node.element as PortalNodeElement
+        );
     }
 }
 
