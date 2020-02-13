@@ -14,6 +14,7 @@ type PortalNodeElement = HTMLElement | SVGElement;
 export interface PortalNode<C extends Component<any> = Component<any>> {
     // The dom element used for the React portal. Created on portal mount.
     element: PortalNodeElement | null,
+    callbackFn: (() => void) | null,
     // Used by the out portal to send props back to the real element
     // Hooked by InPortal to become a state update (and thus rerender)
     setPortalProps(p: ComponentProps<C>): void;
@@ -40,6 +41,7 @@ export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
 
     const portalNode: PortalNode = {
         element: null,
+        callbackFn: null,
         setPortalProps: (props: ComponentProps<C>) => {
             initialProps = props;
         },
@@ -93,13 +95,13 @@ export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
     return portalNode;
 };
 
-export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}, isFirstRender: boolean }> {
+export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}, outPortalCallback: boolean }> {
 
     constructor(props: InPortalProps) {
         super(props);
         this.state = {
             nodeProps: this.props.node.getInitialPortalProps(),
-            isFirstRender: true,
+            outPortalCallback: false,
         };
     }
 
@@ -123,10 +125,11 @@ export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {}
     render() {
         const { children, node } = this.props;
 
-        if (!node.element && this.state.isFirstRender) {
-            // If the InPortal is rendered before the OutPortal then the portal element won't exist yet:
-            // wait for it to initialize and then try again
-            setTimeout(() => this.setState({ isFirstRender: false }))
+        if (!node.element) {
+            // The OutPortal has not yet determined whether or not we're in a special namespace like SVG:
+            // delay our rendering for now, and attach a callbackFn which the OutPortal can use to
+            // trigger a rerender once we're ready
+            node.callbackFn = () => this.setState({ outPortalCallback: true })
             return null;
         }
 
@@ -157,6 +160,13 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
     passPropsThroughPortal() {
         const propsForTarget = Object.assign({}, this.props, { node: undefined });
         this.props.node.setPortalProps(propsForTarget);
+
+        if (this.props.node.callbackFn) {
+            // There's an InPortal which is waiting on this OutPortal:
+            // rerender it now that the OutPortal and portalNode are ready
+            this.props.node.callbackFn();
+            this.props.node.callbackFn = null;
+        }
     }
 
     componentDidMount() {
