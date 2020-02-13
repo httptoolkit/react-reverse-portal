@@ -166,7 +166,7 @@ storiesOf('Portals', module)
             let portalNode = isPortalSwitched ? portalNode2 : portalNode1;
 
             return <div>
-                <portals.InPortal node={portalNode}>
+                <portals.InPortal node={portalNode1}>
                     <Counter />
                 </portals.InPortal>
                 <portals.InPortal node={portalNode2}>

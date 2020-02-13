@@ -55,8 +55,8 @@ export const createPortalNode = <C extends Component<any>>(): PortalNode<C> => {
             }
             portalNode.unmount();
 
-            // To support SVG and other non-html elements, the portalNode's element needs to created with
-            // the correct namespace.
+            // To support SVG and other non-html elements, the portalNode's element needs to be
+            // created with the correct namespace.
             if (!portalNode.element || portalNode.element.tagName !== newParent.tagName) {
                 if (newParent instanceof SVGElement) {
                     portalNode.element = document.createElementNS(SVG_NAMESPACE, newParent.tagName);
@@ -157,16 +157,18 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
         this.passPropsThroughPortal();
     }
 
-    passPropsThroughPortal() {
-        const propsForTarget = Object.assign({}, this.props, { node: undefined });
-        this.props.node.setPortalProps(propsForTarget);
-
+    maybeTriggerOnReady() {
         if (this.props.node.onReady) {
             // There's an InPortal which is waiting on this OutPortal:
             // rerender it now that the OutPortal and portalNode are ready
             this.props.node.onReady();
             this.props.node.onReady = null;
         }
+    }
+
+    passPropsThroughPortal() {
+        const propsForTarget = Object.assign({}, this.props, { node: undefined });
+        this.props.node.setPortalProps(propsForTarget);
     }
 
     componentDidMount() {
@@ -177,6 +179,7 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
         const parent = placeholder.parentNode!;
         node.mount(parent, placeholder);
         this.passPropsThroughPortal();
+        this.maybeTriggerOnReady();
     }
 
     componentDidUpdate() {
@@ -194,6 +197,7 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
         const parent = placeholder.parentNode!;
         node.mount(parent, placeholder);
         this.passPropsThroughPortal();
+        this.maybeTriggerOnReady();
     }
 
     componentWillUnmount() {
