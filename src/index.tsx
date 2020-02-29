@@ -34,7 +34,8 @@ interface InPortalProps {
     children: React.ReactNode;
 }
 
-export const createPortalNode = <C extends Component<any>>(elementType: PortalNodeElementType): PortalNode<C> => {
+// This is the internal implementation: the public entry points set elementType to an appropriate value
+const createPortalNode = <C extends Component<any>>(elementType: PortalNodeElementType): PortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
 
     let parent: Node | undefined;
@@ -70,7 +71,6 @@ export const createPortalNode = <C extends Component<any>>(elementType: PortalNo
             // To support SVG and other non-html elements, the portalNode's elementType needs to match
             // the elementType it's being rendered into
             if (newParent !== parent) {
-                console.log('newParent: ', newParent)
                 if ((isHtmlPortal && !(newParent instanceof HTMLElement)) ||
                     (isSvgPortal && !(newParent instanceof SVGElement))) {
                     throw new Error(`Invalid element type for portal: "${elementType}" portalNodes must be used with ${elementType} elements.`)
@@ -107,7 +107,7 @@ export const createPortalNode = <C extends Component<any>>(elementType: PortalNo
     return portalNode;
 };
 
-export class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
+class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
 
     constructor(props: InPortalProps) {
         super(props);
@@ -150,7 +150,7 @@ type OutPortalProps<C extends Component<any>> = {
     node: PortalNode<C>
 } & Partial<ComponentProps<C>>;
 
-export class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalProps<C>> {
+class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalProps<C>> {
 
     private placeholderNode = React.createRef<HTMLDivElement>();
     private currentPortalNode?: PortalNode<C>;
@@ -203,5 +203,27 @@ export class OutPortal<C extends Component<any>> extends React.PureComponent<Out
         // A <div> placeholder works fine even for SVG.
         return <div ref={this.placeholderNode} />;
     }
+}
 
+const createHtmlPortalNode = createPortalNode.bind(null, 'html');
+const createSvgPortalNode = createPortalNode.bind(null, 'svg')
+
+// Option A: Export a self-contained namespace for each type, including Portal components
+export const html = {
+    createPortalNode: createHtmlPortalNode,
+    InPortal,
+    OutPortal,
+};
+export const svg = {
+    createPortalNode: createSvgPortalNode,
+    InPortal,
+    OutPortal,
+};
+
+// Option B: Export a createPortalNode for each type, with shared Portal components
+export {
+    createHtmlPortalNode,
+    createSvgPortalNode,
+    InPortal,
+    OutPortal,
 }
