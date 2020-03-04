@@ -2,20 +2,7 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 
-// @FIXME: Need to update this based on whichever export style is preferred
-// For now it's a mixed-up hybrid which should be easy to find/replace with either option
-import { html, svg } from '..';
-
-const {
-    createPortalNode: createHtmlPortalNode,
-    InPortal: HtmlInPortal,
-    OutPortal: HtmlOutPortal,
-} = html;
-const {
-    createPortalNode: createSvgPortalNode,
-    InPortal: SvgInPortal,
-    OutPortal: SvgOutPortal,
-} = svg;
+import { createHtmlPortalNode, createSvgPortalNode, InPortal, OutPortal } from '..';
 
 const Container = (props) =>
     <div style={{ "border": "1px solid #222", "padding": "10px" }}>
@@ -29,14 +16,14 @@ storiesOf('Portals', module)
         return <div>
             <div>
                 Portal defined here:
-                <HtmlInPortal node={portalNode}>
+                <InPortal node={portalNode}>
                     Hi!
-                </HtmlInPortal>
+                </InPortal>
             </div>
 
             <div>
                 Portal renders here:
-                <HtmlOutPortal node={portalNode} />
+                <OutPortal node={portalNode} />
             </div>
         </div>;
     })
@@ -47,9 +34,9 @@ storiesOf('Portals', module)
             const [useOuterDiv, setDivToUse] = React.useState(false);
 
             return <div>
-                <HtmlInPortal node={portalNode}>
+                <InPortal node={portalNode}>
                     <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop />
-                </HtmlInPortal>
+                </InPortal>
 
                 <button onClick={() => setDivToUse(!useOuterDiv)}>
                     Click to move the OutPortal
@@ -59,12 +46,12 @@ storiesOf('Portals', module)
 
                 <div>
                     <p>Outer OutPortal:</p>
-                    { useOuterDiv === true && <HtmlOutPortal node={portalNode} /> }
+                    { useOuterDiv === true && <OutPortal node={portalNode} /> }
                     <Container>
                         <Container>
                             <Container>
                                 <p>Inner OutPortal:</p>
-                                { useOuterDiv === false && <HtmlOutPortal node={portalNode} /> }
+                                { useOuterDiv === false && <OutPortal node={portalNode} /> }
                             </Container>
                         </Container>
                     </Container>
@@ -90,9 +77,9 @@ storiesOf('Portals', module)
             const [useOuterDiv, setDivToUse] = React.useState(false);
 
             return <div>
-                <HtmlInPortal node={portalNode}>
+                <InPortal node={portalNode}>
                     <Counter />
-                </HtmlInPortal>
+                </InPortal>
 
                 <button onClick={() => setDivToUse(!useOuterDiv)}>
                     Click to move the OutPortal
@@ -101,12 +88,12 @@ storiesOf('Portals', module)
                 <hr/>
 
                 <p>Outer OutPortal:</p>
-                { useOuterDiv === true && <HtmlOutPortal node={portalNode} /> }
+                { useOuterDiv === true && <OutPortal node={portalNode} /> }
                 <Container>
                     <Container>
                         <Container>
                             <p>Inner OutPortal:</p>
-                            { useOuterDiv === false && <HtmlOutPortal node={portalNode} /> }
+                            { useOuterDiv === false && <OutPortal node={portalNode} /> }
                         </Container>
                     </Container>
                 </Container>
@@ -131,9 +118,9 @@ storiesOf('Portals', module)
             const [useOuterDiv, setDivToUse] = React.useState(false);
 
             return <div>
-                <HtmlInPortal node={portalNode}>
+                <InPortal node={portalNode}>
                     <Counter bgColor="#faa" />
-                </HtmlInPortal>
+                </InPortal>
 
                 <button onClick={() => setDivToUse(!useOuterDiv)}>
                     Click to move the OutPortal
@@ -143,14 +130,14 @@ storiesOf('Portals', module)
 
                 <p>Outer OutPortal:</p>
                 { useOuterDiv === true &&
-                    <HtmlOutPortal node={portalNode} bgColor="#aaf" />
+                    <OutPortal node={portalNode} bgColor="#aaf" />
                 }
                 <Container>
                     <Container>
                         <Container>
                             <p>Inner OutPortal:</p>
                             { useOuterDiv === false &&
-                                <HtmlOutPortal node={portalNode} bgColor="#afa" />
+                                <OutPortal node={portalNode} bgColor="#afa" />
                             }
                         </Container>
                     </Container>
@@ -179,12 +166,12 @@ storiesOf('Portals', module)
             let portalNode = isPortalSwitched ? portalNode2 : portalNode1;
 
             return <div>
-                <HtmlInPortal node={portalNode1}>
+                <InPortal node={portalNode1}>
                     <Counter />
-                </HtmlInPortal>
-                <HtmlInPortal node={portalNode2}>
+                </InPortal>
+                <InPortal node={portalNode2}>
                     <Counter />
-                </HtmlInPortal>
+                </InPortal>
 
                 <button onClick={() => switchPortal(!isPortalSwitched)}>
                     Click to swap the portal shown
@@ -193,7 +180,7 @@ storiesOf('Portals', module)
                 <hr/>
 
                 <p>Inner OutPortal:</p>
-                <HtmlOutPortal node={portalNode} />
+                <OutPortal node={portalNode} />
             </div>
         });
     })
@@ -217,12 +204,12 @@ storiesOf('Portals', module)
                 { state
                     // What happens if you render the same portal twice?
                     ? <>
-                        <HtmlOutPortal node={portalNode} value={1} />
-                        <HtmlOutPortal node={portalNode} value={2} />
+                        <OutPortal node={portalNode} value={1} />
+                        <OutPortal node={portalNode} value={2} />
                     </>
                     // What happens if you switch from 2 portals to 1, to 2 to zero, at random?
                     : Math.random() > 0.5
-                        ? <HtmlOutPortal node={portalNode} value={3} />
+                        ? <OutPortal node={portalNode} value={3} />
                         : null
                 }
             </div>;
@@ -231,9 +218,9 @@ storiesOf('Portals', module)
         return <div>
             <div>
                 Portal defined here:
-                <HtmlInPortal node={portalNode}>
+                <InPortal node={portalNode}>
                     <Target value='unmounted' />
-                </HtmlInPortal>
+                </InPortal>
             </div>
 
             <Parent />
@@ -248,14 +235,14 @@ storiesOf('Portals', module)
                 <rect x={0} y={0} width={300} height={50} fill="gray"></rect>
                 <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
                 <svg x={30} y={10}>
-                    <SvgInPortal node={portalNode}>
+                    <InPortal node={portalNode}>
                         <text alignmentBaseline="text-before-edge" dominantBaseline="hanging" fill="red">
                             test
                         </text>
-                    </SvgInPortal>
+                    </InPortal>
                 </svg>
                 <svg x={30} y={70}>
-                    <SvgOutPortal node={portalNode} />
+                    <OutPortal node={portalNode} />
                 </svg>
             </svg>
         </div>
@@ -273,20 +260,20 @@ storiesOf('Portals', module)
                 </button>
 
                 <svg>
-                    <SvgInPortal node={portalNode}>
+                    <InPortal node={portalNode}>
                         <text alignmentBaseline="text-before-edge" dominantBaseline="hanging" fill="red">
                             test
                         </text>
-                    </SvgInPortal>
+                    </InPortal>
 
                     <rect x={0} y={0} width={300} height={50} fill="gray"></rect>
                     <rect x={0} y={50} width={300} height={50} fill="lightblue"></rect>
 
                     <svg x={30} y={10}>
-                        { inFirstSvg && <SvgOutPortal node={portalNode} /> }
+                        { inFirstSvg && <OutPortal node={portalNode} /> }
                     </svg>
                     <svg x={30} y={70}>
-                        { !inFirstSvg && <SvgOutPortal node={portalNode} /> }
+                        { !inFirstSvg && <OutPortal node={portalNode} /> }
                     </svg>
                 </svg>
             </div>
@@ -305,20 +292,20 @@ storiesOf('Portals', module)
 
                 <div>
                     <svg width={600} height={800}>
-                        <SvgInPortal node={portalNode}>
+                        <InPortal node={portalNode}>
                             <foreignObject width="500" height="400">
                                 <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop />
                             </foreignObject>
-                        </SvgInPortal>
+                        </InPortal>
 
                         <rect x={0} y={0} width={600} height={400} fill="gray"></rect>
                         <rect x={0} y={400} width={600} height={400} fill="lightblue"></rect>
 
                         <svg x={30} y={10}>
-                            { inFirstSvg && <SvgOutPortal node={portalNode} /> }
+                            { inFirstSvg && <OutPortal node={portalNode} /> }
                         </svg>
                         <svg x={30} y={410}>
-                            { !inFirstSvg && <SvgOutPortal node={portalNode} /> }
+                            { !inFirstSvg && <OutPortal node={portalNode} /> }
                         </svg>
                     </svg>
                 </div>
@@ -338,12 +325,12 @@ storiesOf('Portals', module)
                     Until this is used MyExpensiveComponent will not
                     appear anywhere in the page.
                 */}
-                <HtmlInPortal node={portalNode}>
+                <InPortal node={portalNode}>
                     <MyExpensiveComponent
                         // Optionally provide props to use before this enters the DOM
                         myProp={"defaultValue"}
                     />
-                </HtmlInPortal>
+                </InPortal>
 
                 {/* ... The rest of your UI ... */}
 
@@ -360,7 +347,7 @@ storiesOf('Portals', module)
 
                 A:
 
-                <HtmlOutPortal
+                <OutPortal
                     node={props.portalNode} // Show the content from this node here
                 />
             </div>;
@@ -372,7 +359,7 @@ storiesOf('Portals', module)
 
                 B:
 
-                <HtmlOutPortal
+                <OutPortal
                     node={props.portalNode} // Pull in the content from this node
 
                     myProp={"newValue"}     // Optionally, override default values

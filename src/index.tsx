@@ -216,19 +216,6 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
 const createHtmlPortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML) as () => HtmlPortalNode;
 const createSvgPortalNode  = createPortalNode.bind(null, ELEMENT_TYPE_SVG)  as () => SvgPortalNode;
 
-// Option A: Export a self-contained namespace for each type, including Portal components
-export const html = {
-    createPortalNode: createHtmlPortalNode,
-    InPortal,
-    OutPortal,
-};
-export const svg = {
-    createPortalNode: createSvgPortalNode,
-    InPortal,
-    OutPortal,
-};
-
-// Option B: Export a createPortalNode for each type, with shared Portal components
 export {
     createHtmlPortalNode,
     createSvgPortalNode,
