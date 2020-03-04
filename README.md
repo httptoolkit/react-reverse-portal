@@ -43,7 +43,7 @@ Create a portal node, populate it with `InPortal`, and use it somewhere with `Ou
 import * as portals from 'react-reverse-portal';
 
 const MyComponent = (props) => {
-    const portalNode = React.useMemo(() => portals.createPortalNode(), []);
+    const portalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
 
     return <div>
         {/*
@@ -104,11 +104,17 @@ Normally in `ComponentA`/`ComponentB` examples like the above, switching from `C
 
 How does it work under the hood?
 
-### `portals.createPortalNode`
+### `portals.createHtmlPortalNode`
 
 This creates a detached DOM node, with a little extra functionality attached to allow transmitting props later on.
 
-This node will contain your portal contents later, and eventually be attached in the target location. By default it's a `div`, but you can pass your tag of choice (as a string) to override this if necessary. It's a plain DOM node, so you can mutate it to set any required props (e.g. `className`) with the standard DOM APIs.
+This node will contain your portal contents later, within a `<div>`, and will eventually be attached in the target location. Its plain DOM node is available at `.element`, so you can mutate that to set any required props (e.g. `className`) with the standard DOM APIs.
+
+### `portals.createSvgPortalNode`
+
+This creates a detached SVG DOM node. It works identically to the node from `createHtmlPortalNode`, except it will work with SVG elements. Content is placed within a `<g>` instead of a `<div>`.
+
+An error will be thrown if you attempt to use a HTML node for SVG content, or a SVG node for HTML content, because browsers do not support this.
 
 ### `portals.InPortal`
 
