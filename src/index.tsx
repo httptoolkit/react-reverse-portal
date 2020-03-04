@@ -39,6 +39,16 @@ export interface SvgPortalNode<C extends Component<any> = Component<any>> extend
 type AnyPortalNode<C extends Component<any> = Component<any>> = HtmlPortalNode<C> | SvgPortalNode<C>;
 
 
+const validateElementType = (domElement: Element, elementType: ANY_ELEMENT_TYPE) => {
+    if (elementType === ELEMENT_TYPE_HTML) {
+        return domElement instanceof HTMLElement;
+    }
+    if (elementType === ELEMENT_TYPE_SVG) {
+        return domElement instanceof SVGElement;
+    }
+    throw new Error(`Unrecognized element type "${elementType}" for validateElementType.`);
+};
+
 // This is the internal implementation: the public entry points set elementType to an appropriate value
 const createPortalNode = <C extends Component<any>>(elementType: ANY_ELEMENT_TYPE): AnyPortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
@@ -52,7 +62,7 @@ const createPortalNode = <C extends Component<any>>(elementType: ANY_ELEMENT_TYP
     } else if (elementType === ELEMENT_TYPE_SVG){
         element= document.createElementNS(SVG_NAMESPACE, 'g');
     } else {
-        throw new Error(`Invalid element type "${elementType}" for createPortalNode: must be "html" or "svg".`)
+        throw new Error(`Invalid element type "${elementType}" for createPortalNode: must be "html" or "svg".`);
     }
 
     const portalNode: AnyPortalNode<C> = {
@@ -74,9 +84,8 @@ const createPortalNode = <C extends Component<any>>(elementType: ANY_ELEMENT_TYP
             // To support SVG and other non-html elements, the portalNode's elementType needs to match
             // the elementType it's being rendered into
             if (newParent !== parent) {
-                if ((elementType === ELEMENT_TYPE_HTML && !(newParent instanceof HTMLElement)) ||
-                    (elementType === ELEMENT_TYPE_SVG  && !(newParent instanceof SVGElement))) {
-                    throw new Error(`Invalid element type for portal: "${elementType}" portalNodes must be used with ${elementType} elements.`)
+                if (!validateElementType(newParent, elementType)) {
+                    throw new Error(`Invalid element type for portal: "${elementType}" portalNodes must be used with ${elementType} elements, but OutPortal is within <${newParent.tagName}>.`);
                 }
             }
 
@@ -141,11 +150,10 @@ class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
 
         // To support SVG and other non-html elements, every element that gets rendered
         // into the InPortal needs to match the portalNode's elementType.
-        // Non-elements like text and comments are fine with any portal type.
+        // Non-elements like Text aren't checkable.
         childNodes.forEach((childNode) => {
             if (childNode instanceof Element) {
-                if ((elementType === ELEMENT_TYPE_HTML && !(childNode instanceof HTMLElement)) ||
-                    (elementType === ELEMENT_TYPE_SVG  && !(childNode instanceof SVGElement))) {
+                if (!validateElementType(childNode, elementType)) {
                     throw new Error(`Invalid content for portal: "${elementType}" portalNodes must be used with ${elementType} elements, but InPortal received <${childNode.tagName}>.`);
                 }
             }
