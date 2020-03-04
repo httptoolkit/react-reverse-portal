@@ -142,31 +142,11 @@ class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
         });
     };
 
-    validateElementTypesOfChildren() {
-        const {
-            elementType,
-            element: { childNodes },
-        } = this.props.node;
-
-        // To support SVG and other non-html elements, every element that gets rendered
-        // into the InPortal needs to match the portalNode's elementType.
-        // Non-elements like Text aren't checkable.
-        childNodes.forEach((childNode) => {
-            if (childNode instanceof Element) {
-                if (!validateElementType(childNode, elementType)) {
-                    throw new Error(`Invalid content for portal: "${elementType}" portalNodes must be used with ${elementType} elements, but InPortal received <${childNode.tagName}>.`);
-                }
-            }
-        })
-    }
-
     componentDidMount() {
-        this.validateElementTypesOfChildren();
         this.addPropsChannel();
     }
 
     componentDidUpdate() {
-        this.validateElementTypesOfChildren();
         this.addPropsChannel();
     }
 
