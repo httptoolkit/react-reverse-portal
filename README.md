@@ -114,7 +114,7 @@ This node will contain your portal contents later, within a `<div>`, and will ev
 
 This creates a detached SVG DOM node. It works identically to the node from `createHtmlPortalNode`, except it will work with SVG elements. Content is placed within a `<g>` instead of a `<div>`.
 
-An error will be thrown if you attempt to use a HTML node for SVG content, or a SVG node for HTML content, because browsers do not support this.
+An error will be thrown if you attempt to use a HTML node for SVG content, or a SVG node for HTML content.
 
 ### `portals.InPortal`
 
