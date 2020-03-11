@@ -128,16 +128,15 @@ All extra props are given to _all_ children of the InPortal (except strings/null
 
 OutPortal components take a `node` for the portal node, and any extra props that should be passed through to the portal children.
 
-It extra props to the InPortal (using the extra functionality we've attached to the portal node), and when rendered it attaches the detached DOM node in its place in the DOM. More specifically: the DOM node returned by `createPortalNode` will be attached in the place of `<portals.OutPortal>` in your React tree.
+It extra props to the InPortal (using the extra functionality we've attached to the portal node), and when rendered it attaches the detached DOM node in its place in the DOM. More specifically: the DOM node returned by `create*PortalNode` will be attached in the place of `<portals.OutPortal>` in your React tree.
 
 ## Important notes
 
-* **This is new and experimental! Try it at your own risk!**
 * Nodes should be rendered to at most one OutPortal at any time. Rendering a node in two OutPortals simultaneously will make bad things happen, rendering the node in a random one or maybe none of the OutPortals, and probably setting up React to explode later. Each portal node should only be used in one place at any time.
 * Rendering to zero OutPortals is fine: the node will be rendered as normal, using just the props provided inside the InPortal definition, and will continue to happily exist but just not appear in the DOM anywhere.
 * Reverse portals tie rebuilding of the contents of the portal to InPortal (where it's defined), rather than the parent of the OutPortal (where it appears in the tree). That's great (that's the whole point really), but the contents of the InPortal will still be rebuilt anytime the InPortal itself is, e.g. if the InPortal's parent is rebuilt.
-* Be aware that if you call `createPortalNode` in the render method of the parent of an InPortal, you'll get a different node to render into each time, and this will cause unnecessary rerenders, one every time the parent updates. It's generally better to create the node once and persist it, either using the useMemo hook, or in the initial construction of your class component.
-* By default, the types for nodes, InPortals and OutPortals allow any props and any components. Pass a component type to them to be more explicit and enforce prop types, e.g. `createPortalNode<MyComponent>`, `<portals.InPortal<MyComponent>>`, `<portals.OutPortal<MyComponent>>`.
+* Be aware that if you call `create*PortalNode` in the render method of the parent of an InPortal, you'll get a different node to render into each time, and this will cause unnecessary rerenders, one every time the parent updates. It's generally better to create the node once and persist it, either using the useMemo hook, or in the initial construction of your class component.
+* By default, the types for nodes, InPortals and OutPortals allow any props and any components. Pass a component type to them to be more explicit and enforce prop types, e.g. `createHtmlPortalNode<MyComponent>`, `<portals.InPortal<MyComponent>>`, `<portals.OutPortal<MyComponent>>`.
 
 ## Contributing
 
