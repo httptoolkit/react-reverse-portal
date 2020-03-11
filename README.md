@@ -6,9 +6,11 @@
 
 **Build an element once, move it anywhere**
 
-Added in React 16.0, React's built-in [portals](https://reactjs.org/docs/portals.html) let you render an element in a meaningful location within the React tree, but then place the output into a DOM node elsewhere.
+Added in React 16.0, React's built-in [portals](https://reactjs.org/docs/portals.html) let you render an element in a meaningful location within your React component hierarchy, but then send the output to a DOM node elsewhere.
 
-Reverse portals let you do the opposite: pull a rendered element from elsewhere into a meaningful location within your React tree. This allows you to reparent DOM nodes, so you can move React-rendered elements around your React tree and the DOM without re-rendering them. Reverse portals also allow you to pull a rendered node out of the tree entirely, and return it later, all without rerendering the node.
+Reverse portals let you do the opposite: _pull_ a rendered element from elsewhere into a target location within your React tree. This allows you to reparent DOM nodes, so you can move React-rendered elements around your React tree and the DOM without re-rendering them.
+
+Reverse portals also allow you to take a React-rendered node out of the DOM entirely, and return it later, all without rerendering the node.
 
 (In a rush? Check out [the examples](https://httptoolkit.github.io/react-reverse-portal/))
 
@@ -19,12 +21,13 @@ This is useful in a few cases:
 * Your elements are expensive to render, and you'd like to render them once and then place/unplace them later (e.g. a reusable pool of expensive-to-render elements that can be shared among different parts of your application).
 * You want to define the contents of an element separately from where it actually appears in the tree, e.g. modals, breadcrumbs, etc (possible with normal portals, but made more flexible & declarative with reverse portals)
 
-In [HTTP Toolkit](https://httptoolkit.tech) for example, this is used to render [Monaco Editor](https://github.com/microsoft/monaco-editor) (an expensive-to-initialize rich text editor) only once, and then quickly & easily reuse the same editor to show the body of many different HTTP requests & responses in different places, without having to rebuild the component, making the UI much more responsive. Check out the full diff to implement that here: [httptoolkit-ui@8456eeca7a886b2d57b2a84bb4ecf299e20c77f8](https://github.com/httptoolkit/httptoolkit-ui/commit/8456eeca7a886b2d57b2a84bb4ecf299e20c77f8).
+In [HTTP Toolkit](https://httptoolkit.tech) for example, this is used to render [Monaco Editor](https://github.com/microsoft/monaco-editor) (an expensive-to-initialize rich text editor) only once, and then quickly & easily reuse the same editor to show the body of many different HTTP requests & responses in different places, without ever having to rebuild the component, making the UI much more responsive. Check out the full diff to implement that here: [httptoolkit-ui@8456eeca7a886b2d57b2a84bb4ecf299e20c77f8](https://github.com/httptoolkit/httptoolkit-ui/commit/8456eeca7a886b2d57b2a84bb4ecf299e20c77f8).
 
 ## Features
 
 * Reparent rendered React elements without rerendering
 * Provide props at either the creation (in-portal) or usage (out-portal) locations, or both
+* Supports reparenting of both HTML and SVG elements
 * Single tiny file (2.5kB unminified, ungzipped) with zero dependencies
 * Works with React 16+
 * Written in TypeScript
@@ -43,30 +46,34 @@ Create a portal node, populate it with `InPortal`, and use it somewhere with `Ou
 import * as portals from 'react-reverse-portal';
 
 const MyComponent = (props) => {
+    // Create a portal node: this holds your rendered content
     const portalNode = React.useMemo(() => portals.createHtmlPortalNode(), []);
 
     return <div>
         {/*
-            Create the content that you want to move around.
-            InPortals render as normal, but to detached DOM.
-            Until this is used MyExpensiveComponent will not
-            appear anywhere in the page.
+            Render the content that you want to move around later.
+            InPortals render as normal, but send the output to detached DOM.
+            MyExpensiveComponent will be rendered immediately, but until
+            portalNode is used in an OutPortal, MyExpensiveComponent, it
+            will not appear anywhere on the page.
         */}
         <portals.InPortal node={portalNode}>
             <MyExpensiveComponent
-                // Optionally provide props to use before this enters the DOM
+                // Optionally set props to use now, before this enters the DOM
                 myProp={"defaultValue"}
             />
         </portals.InPortal>
 
         {/* ... The rest of your UI ... */}
 
-        {/* Pass the node to whoever might want to show it: */}
+        {/* Later, pass the portal node around to whoever might want to use it: */}
         { props.componentToShow === 'component-a'
             ? <ComponentA portalNode={portalNode} />
             : <ComponentB portalNode={portalNode} /> }
     </div>;
 }
+
+// Later still, pull content from the portal node and show it somewhere:
 
 const ComponentA = (props) => {
     return <div>
@@ -86,9 +93,9 @@ const ComponentB = (props) => {
             myProp={"newValue"}     // Optionally, override default values
             myOtherProp={123}       // Or add new props
 
-            // These props go back to the InPortal, and trigger a component
-            // render (but on the same component instance) as if they had
-            // been passed directly.
+            // These props go back to the content of the InPortal, and trigger a
+            // component render (but on the same component instance) as if they
+            // had been passed to MyExpensiveComponent directly.
         />
     </div>;
 }
