@@ -222,8 +222,10 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
     }
 }
 
-const createHtmlPortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML) as () => HtmlPortalNode;
-const createSvgPortalNode  = createPortalNode.bind(null, ELEMENT_TYPE_SVG)  as () => SvgPortalNode;
+const createHtmlPortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML) as
+    <C extends Component<any> = Component<any>>() => HtmlPortalNode<C>;
+const createSvgPortalNode  = createPortalNode.bind(null, ELEMENT_TYPE_SVG) as
+    <C extends Component<any> = Component<any>>() => SvgPortalNode<C>;
 
 export {
     createHtmlPortalNode,
