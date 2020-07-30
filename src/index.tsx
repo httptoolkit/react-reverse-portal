@@ -5,6 +5,8 @@ import * as ReactDOM from 'react-dom';
 const ELEMENT_TYPE_HTML = 'html';
 const ELEMENT_TYPE_SVG  = 'svg';
 
+const PORTAL_HOLDER_CLASSNAME = '__reverse-portal-holder'
+
 type ANY_ELEMENT_TYPE = typeof ELEMENT_TYPE_HTML | typeof ELEMENT_TYPE_SVG;
 
 // ReactDOM can handle several different namespaces, but they're not exported publicly
@@ -218,7 +220,7 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
         // Render a placeholder to the DOM, so we can get a reference into
         // our location in the DOM, and swap it out for the portaled node.
         // A <div> placeholder works fine even for SVG.
-        return <div ref={this.placeholderNode} />;
+        return <div className={PORTAL_HOLDER_CLASSNAME} ref={this.placeholderNode} />;
     }
 }
 
