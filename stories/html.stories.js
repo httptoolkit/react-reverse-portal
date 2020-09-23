@@ -226,6 +226,40 @@ storiesOf('Portals', module)
             <Parent />
         </div>;
     })
+    .add("swap nodes between different locations", () => {
+        const numberOfNodes = 5;
+        const initialOrder = [];
+        for (let i = 0; i < numberOfNodes; i++) {
+          initialOrder[i] = i;
+        }
+    
+        const ExampleContent = ({ content }) => String(content);
+    
+        const ChangeLayoutWithoutUnmounting = () => {
+          const nodes = React.useMemo(
+            () => initialOrder.map(createHtmlPortalNode),
+            []
+          );
+          const [order, setOrder] = React.useState(initialOrder);
+          return (
+            <div>
+              <button onClick={() => setOrder(order.slice().reverse())}>
+                Click to reverse the order
+              </button>
+              {nodes.map((node, index) => (
+                <InPortal node={node}>
+                  <ExampleContent content={index} />
+                </InPortal>
+              ))}
+              {order.map((position) => (
+                <OutPortal node={nodes[position]} />
+              ))}
+            </div>
+          );
+        };
+    
+        return <ChangeLayoutWithoutUnmounting />;
+    })
     .add('Example from README', () => {
         const MyExpensiveComponent = () => 'expensive!';
 
