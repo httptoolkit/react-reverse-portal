@@ -155,7 +155,7 @@ class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
 
         return ReactDOM.createPortal(
             React.Children.map(children, (child) => {
-                if (!React.isValidElement(child)) return child;
+                if (!React.isValidElement(child) || !this.state.nodeProps) return child;
                 return React.cloneElement(child, this.state.nodeProps)
             }),
             node.element
