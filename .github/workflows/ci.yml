@@ -18,13 +18,32 @@ jobs:
 
       - run: npm install --no-package-lock
       - run: npm test
-      - run: npm build-storybook
+      - run: npm run build-storybook
 
-      - name: Deploy storybook
-        if: github.ref == 'refs/heads/master' && matrix.node-version == 'v16.x'
+      - uses: actions/upload-artifact@v2
+        #TODO: if: github.ref == 'refs/heads/master' && matrix.node-version == 'v16.x'
+        if: matrix.node-version == 'v16.x'
+        with:
+          name: examples
+          path: examples/*
+          if-no-files-found: error
+
+  publish:
+    name: Deploy storybook examples
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: examples
+          path: examples
+
+      - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
           FOLDER: examples
           CLEAN: true # Automatically remove deleted files from the deploy branch
