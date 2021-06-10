@@ -7,7 +7,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, v16.x, '*']
+        node-version: [12.x, 14.x, 16.x, '*']
 
     steps:
       - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         # Only publish examples using the master branch, and only from one build
-        if: github.ref == 'refs/heads/master' && matrix.node-version == 'v16.x'
+        if: github.ref == 'refs/heads/master' && matrix.node-version == '16.x'
         with:
           name: examples
           path: examples/*
@@ -45,6 +45,5 @@ jobs:
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
-          BRANCH: gh-pages
-          FOLDER: examples
-          CLEAN: true # Automatically remove deleted files from the deploy branch
+          branch: gh-pages
+          folder: examples
