@@ -1,0 +1,30 @@
+name: CI
+on: push
+jobs:
+  build:
+    name: Build & test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, v14.17, v16.x, '*']
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm install --no-package-lock
+      - run: npm test
+      - run: npm build-storybook
+
+      - name: Deploy storybook
+        if: github.ref == 'refs/heads/master' && matrix.node-version == 'v16.x'
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: examples
+          CLEAN: true # Automatically remove deleted files from the deploy branch
