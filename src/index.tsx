@@ -9,7 +9,7 @@ type ANY_ELEMENT_TYPE = typeof ELEMENT_TYPE_HTML | typeof ELEMENT_TYPE_SVG;
 
 type Options = {
     attributes: { [key: string]: string };
-  };
+};
 
 // ReactDOM can handle several different namespaces, but they're not exported publicly
 // https://github.com/facebook/react/blob/b87aabdfe1b7461e7331abb3601d9e6bb27544bc/packages/react-dom/src/shared/DOMNamespaces.js#L8-L10
@@ -73,8 +73,8 @@ const createPortalNode = <C extends Component<any>>(
     }
 
     if (options && typeof options === "object") {
-        for (const [key, value] of Object.entries(options?.attributes)) {
-          element.setAttribute(key, value);
+        for (const [key, value] of Object.entries(options.attributes)) {
+            element.setAttribute(key, value);
         }
     }
 
@@ -236,9 +236,9 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
 }
 
 const createHtmlPortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML) as
-    <C extends Component<any> = Component<any>>() => HtmlPortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: Options) => HtmlPortalNode<C>;
 const createSvgPortalNode  = createPortalNode.bind(null, ELEMENT_TYPE_SVG) as
-    <C extends Component<any> = Component<any>>() => SvgPortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: Options) => SvgPortalNode<C>;
 
 export {
     createHtmlPortalNode,
