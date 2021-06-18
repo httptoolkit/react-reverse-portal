@@ -92,4 +92,32 @@ storiesOf('SVG Portals', module)
                 </svg>
             </div>
         })
+    })
+    .add('can pass attributes option to createSvgPortalNode', () => {
+        return React.createElement(() => {
+            const [hasAttrOption, setHasAttrOption] = React.useState(false);
+
+            const portalNode = createSvgPortalNode(hasAttrOption ? {attributes: { stroke: 'blue' }} : null);
+            return <div>
+                <button onClick={() => setHasAttrOption(!hasAttrOption)}>
+                    Click to pass attributes option to the intermediary svg
+                </button>
+
+                <hr/>
+
+                <svg>
+                    <InPortal node={portalNode}>
+                        <circle cx="50" cy="50" r="40"  fill="lightblue" />
+                    </InPortal>
+
+                    <svg x={30} y={10}>
+                      <OutPortal node={portalNode} />
+                    </svg>
+                </svg>
+
+                <br/>
+
+                <text>{!hasAttrOption ? `const portalNode = createSvgPortalNode();` : `const portalNode = createSvgPortalNode({ attributes: { stroke: "blue" } });`}</text>
+            </div>
+        });
     });

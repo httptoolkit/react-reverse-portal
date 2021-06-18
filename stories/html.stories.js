@@ -260,6 +260,35 @@ storiesOf('Portals', module)
     
         return <ChangeLayoutWithoutUnmounting />;
     })
+    .add('can pass attributes option to createHtmlPortalNode', () => {
+        return React.createElement(() => {
+            const [hasAttrOption, setHasAttrOption] = React.useState(false);
+
+            const portalNode = createHtmlPortalNode( hasAttrOption ? {
+                attributes: { id: "div-id-1", style: "background-color: #aaf; width: 204px;" }
+            } : null);
+
+            return <div>
+                <button onClick={() => setHasAttrOption(!hasAttrOption)}>
+                    Click to pass attributes option to the intermediary div
+                </button>
+
+                <hr/>
+
+                <InPortal node={portalNode}>
+                    <div style={{width: '200px', height: '50px', border: '2px solid purple'}} />
+                </InPortal>
+
+                <OutPortal node={portalNode} />
+
+                <br/>
+                <br/>
+                <br/>
+
+                <text>{!hasAttrOption ? `const portalNode = createHtmlPortalNode();` : `const portalNode = createHtmlPortalNode({ attributes: { id: "div-id-1", style: "background-color: #aaf; width: 204px;" } });`}</text>
+            </div>
+        });
+    })
     .add('Example from README', () => {
         const MyExpensiveComponent = () => 'expensive!';
 

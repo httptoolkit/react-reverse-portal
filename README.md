@@ -111,13 +111,23 @@ Normally in `ComponentA`/`ComponentB` examples like the above, switching from `C
 
 How does it work under the hood?
 
-### `portals.createHtmlPortalNode`
+### `portals.createHtmlPortalNode([options])`
 
 This creates a detached DOM node, with a little extra functionality attached to allow transmitting props later on.
 
-This node will contain your portal contents later, within a `<div>`, and will eventually be attached in the target location. Its plain DOM node is available at `.element`, so you can mutate that to set any required props (e.g. `className`) with the standard DOM APIs.
+This node will contain your portal contents later, within a `<div>`, and will eventually be attached in the target location.
 
-### `portals.createSvgPortalNode`
+An optional options object parameter can be passed to configure the node. The only supported option is `attributes`: this can be used to set the HTML attributes (style, class, etc.) of the intermediary, like so:
+
+```javascript
+const portalNode = portals.createHtmlPortalNode({
+	attributes: { id: "div-1", style: "background-color: #aaf; width: 100px;" }
+});
+```
+
+The div's DOM node is also available at `.element`, so you can mutate that directly with the standard DOM APIs if preferred.
+
+### `portals.createSvgPortalNode([options])`
 
 This creates a detached SVG DOM node. It works identically to the node from `createHtmlPortalNode`, except it will work with SVG elements. Content is placed within a `<g>` instead of a `<div>`.
 
