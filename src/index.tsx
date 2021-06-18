@@ -7,6 +7,10 @@ const ELEMENT_TYPE_SVG  = 'svg';
 
 type ANY_ELEMENT_TYPE = typeof ELEMENT_TYPE_HTML | typeof ELEMENT_TYPE_SVG;
 
+type Options = {
+    attributes: { [key: string]: string };
+  };
+
 // ReactDOM can handle several different namespaces, but they're not exported publicly
 // https://github.com/facebook/react/blob/b87aabdfe1b7461e7331abb3601d9e6bb27544bc/packages/react-dom/src/shared/DOMNamespaces.js#L8-L10
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
@@ -50,7 +54,10 @@ const validateElementType = (domElement: Element, elementType: ANY_ELEMENT_TYPE)
 };
 
 // This is the internal implementation: the public entry points set elementType to an appropriate value
-const createPortalNode = <C extends Component<any>>(elementType: ANY_ELEMENT_TYPE): AnyPortalNode<C> => {
+const createPortalNode = <C extends Component<any>>(
+    elementType: ANY_ELEMENT_TYPE,
+    options?: Options
+): AnyPortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
 
     let parent: Node | undefined;
@@ -63,6 +70,12 @@ const createPortalNode = <C extends Component<any>>(elementType: ANY_ELEMENT_TYP
         element= document.createElementNS(SVG_NAMESPACE, 'g');
     } else {
         throw new Error(`Invalid element type "${elementType}" for createPortalNode: must be "html" or "svg".`);
+    }
+
+    if (options && typeof options === "object") {
+        for (const [key, value] of Object.entries(options?.attributes)) {
+          element.setAttribute(key, value);
+        }
     }
 
     const portalNode: AnyPortalNode<C> = {
