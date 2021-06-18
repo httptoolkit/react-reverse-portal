@@ -144,6 +144,13 @@ It extra props to the InPortal (using the extra functionality we've attached to 
 * Reverse portals tie rebuilding of the contents of the portal to InPortal (where it's defined), rather than the parent of the OutPortal (where it appears in the tree). That's great (that's the whole point really), but the contents of the InPortal will still be rebuilt anytime the InPortal itself is, e.g. if the InPortal's parent is rebuilt.
 * Be aware that if you call `create*PortalNode` in the render method of the parent of an InPortal, you'll get a different node to render into each time, and this will cause unnecessary rerenders, one every time the parent updates. It's generally better to create the node once and persist it, either using the useMemo hook, or in the initial construction of your class component.
 * By default, the types for nodes, InPortals and OutPortals allow any props and any components. Pass a component type to them to be more explicit and enforce prop types, e.g. `createHtmlPortalNode<MyComponent>`, `<portals.InPortal<MyComponent>>`, `<portals.OutPortal<MyComponent>>`.
+* You can pass `attributes` option for the `create*PortalNode` methods that would allow you to configure any attributes (style, class, etc.) to the intermediary div (or svg):
+
+```
+const portalNode = portals.createHtmlPortalNode({
+	attributes: { id: "div-1", style: "background-color: #aaf; width: 100px;" }
+});
+```
 
 ## Contributing
 
