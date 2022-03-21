@@ -363,12 +363,14 @@ storiesOf('Portals', module)
                     Until this is used MyExpensiveComponent will not
                     appear anywhere in the page.
                 */}
-                <InPortal node={portalNode}>
-                    <MyExpensiveComponent
-                        // Optionally provide props to use before this enters the DOM
-                        myProp={"defaultValue"}
-                    />
-                </InPortal>
+                <div onClick={() => alert('InPortal wrapper click event')}>
+                    <InPortal node={portalNode}>
+                        <MyExpensiveComponent
+                            // Optionally provide props to use before this enters the DOM
+                            myProp={"defaultValue"}
+                        />
+                    </InPortal>
+                </div>
 
                 {/* ... The rest of your UI ... */}
 
@@ -378,8 +380,8 @@ storiesOf('Portals', module)
         }
 
         const ComponentA = (props) => {
-            return <div 
-                onClick={() => alert('Div clicked')}
+            return <div
+                onClick={() => alert('OutPortal wrapper click event')}
                 onMouseDown={() => console.log('Mouse Down')}
                 onMouseEnter={() => console.log('Mouse enter')}
             >
