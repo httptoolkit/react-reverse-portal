@@ -205,15 +205,15 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
         this.passPropsThroughPortal();
     }
 
-    componentDidUpdate(prevProps: OutPortalProps<C>) {
+    componentDidUpdate() {
         // We re-mount on update, just in case we were unmounted (e.g. by
         // a second OutPortal, which has now been removed)
         const node = this.props.node as AnyPortalNode<C>;
-        const prevNode = prevProps.node
 
         // If we're switching portal nodes, we need to clean up the current one first.
         if (this.currentPortalNode && node !== this.currentPortalNode) {
             this.currentPortalNode.unmount(this.placeholderNode.current!);
+            this.currentPortalNode.setPortalProps({} as ComponentProps<C>);
             this.currentPortalNode = node;
         }
 
@@ -221,9 +221,6 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
         const parent = placeholder.parentNode!;
         node.mount(parent, placeholder);
         this.passPropsThroughPortal();
-        if (prevNode !== node) {
-            prevNode.setPortalProps({} as ComponentProps<C>);
-        }
     }
 
     componentWillUnmount() {
