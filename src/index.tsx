@@ -213,6 +213,7 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
         // If we're switching portal nodes, we need to clean up the current one first.
         if (this.currentPortalNode && node !== this.currentPortalNode) {
             this.currentPortalNode.unmount(this.placeholderNode.current!);
+            this.currentPortalNode.setPortalProps({} as ComponentProps<C>);
             this.currentPortalNode = node;
         }
 
@@ -225,6 +226,7 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
     componentWillUnmount() {
         const node = this.props.node as AnyPortalNode<C>;
         node.unmount(this.placeholderNode.current!);
+        node.setPortalProps({} as ComponentProps<C>);
     }
 
     render() {
