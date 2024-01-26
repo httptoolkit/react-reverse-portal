@@ -181,3 +181,7 @@ To actually make your changes, you just need to set up the codebase:
 * `npm run build` - compiles the code
 * `npm test` - no tests for now, so this just checks the code compiles (it's the same as `build`). Tests welcome!
 * `npm run storybook` - starts up the storybook and opens it in your browser. You'll probably need to `npm run build` first, and again later if you make changes in `src/`.
+
+## Security contact information
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
