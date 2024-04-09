@@ -44,11 +44,15 @@ type AnyPortalNode<C extends Component<any> = Component<any>> = HtmlPortalNode<C
 
 
 const validateElementType = (domElement: Element, elementType: ANY_ELEMENT_TYPE) => {
+    const document = domElement.ownerDocument as any;
+    // Cast document to `any` because Typescript doesn't know about the legacy `Document.parentWindow` field, and also
+    // doesn't believe `Window.HTMLElement`/`Window.SVGElement` can be used in instanceof tests.
+    const window = document.defaultView ?? document.parentWindow; // Fallback on `parentWindow` in order to support IE8 and earlier
     if (elementType === ELEMENT_TYPE_HTML) {
-        return domElement instanceof HTMLElement;
+        return domElement instanceof window.HTMLElement;
     }
     if (elementType === ELEMENT_TYPE_SVG) {
-        return domElement instanceof SVGElement;
+        return domElement instanceof window.SVGElement;
     }
     throw new Error(`Unrecognized element type "${elementType}" for validateElementType.`);
 };
