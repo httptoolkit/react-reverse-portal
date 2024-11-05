@@ -2,7 +2,7 @@
 
 > _Part of [HTTP Toolkit](https://httptoolkit.tech): powerful tools for building, testing & debugging HTTP(S)_
 
-![Apache 2.0 licensed](https://img.shields.io/npm/l/react-reverse-portal) ![Tiny bundle size](https://img.shields.io/bundlephobia/minzip/react-reverse-portal) [![Travis Build Status](https://img.shields.io/travis/httptoolkit/react-reverse-portal.svg)](https://travis-ci.org/httptoolkit/react-reverse-portal) [![Available on NPM](https://img.shields.io/npm/v/react-reverse-portal.svg)](https://npmjs.com/package/react-reverse-portal)
+![Apache 2.0 licensed](https://img.shields.io/npm/l/react-reverse-portal) ![Tiny bundle size](https://img.shields.io/bundlephobia/minzip/react-reverse-portal) [![Build status](https://github.com/httptoolkit/react-reverse-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/httptoolkit/react-reverse-portal/actions/workflows/ci.yml) [![Available on NPM](https://img.shields.io/npm/v/react-reverse-portal.svg)](https://npmjs.com/package/react-reverse-portal)
 
 **Build an element once, move it anywhere**
 
