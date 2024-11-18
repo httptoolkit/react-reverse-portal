@@ -2,7 +2,7 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 
-import { createHtmlPortalNode, createSvgPortalNode, InPortal, OutPortal } from '..';
+import { createHtmlPortalNode, createHtmlInlinePortalNode, InPortal, OutPortal } from '..';
 
 const Container = (props) =>
     <div style={{ "border": "1px solid #222", "padding": "10px" }}>
@@ -288,6 +288,23 @@ storiesOf('Portals', module)
                 <text>{!hasAttrOption ? `const portalNode = createHtmlPortalNode();` : `const portalNode = createHtmlPortalNode({ attributes: { id: "div-id-1", style: "background-color: #aaf; width: 204px;" } });`}</text>
             </div>
         });
+    })
+    .add('can render inline portal', () => {
+        const portalNode = createHtmlInlinePortalNode();
+
+        return <div>
+            <p>
+                Portal defined here:
+                <InPortal node={portalNode}>
+                    Hi!
+                </InPortal>
+            </p>
+
+            <p>
+                Portal renders here:
+                <OutPortal node={portalNode} />
+            </p>
+        </div>;
     })
     .add('Example from README', () => {
         const MyExpensiveComponent = () => 'expensive!';
