@@ -33,19 +33,15 @@ interface PortalNodeBase<C extends Component<any>> {
     // latest placeholder we replaced. This avoids some race conditions.
     unmount(expectedPlaceholder?: Node): void;
 }
-export interface HtmlBlockPortalNode<C extends Component<any> = Component<any>> extends PortalNodeBase<C> {
+export interface HtmlPortalNode<C extends Component<any> = Component<any>> extends PortalNodeBase<C> {
     element: HTMLElement;
-    elementType: typeof ELEMENT_TYPE_HTML_BLOCK;
-}
-export interface HtmlInlinePortalNode<C extends Component<any> = Component<any>> extends PortalNodeBase<C> {
-    element: HTMLElement;
-    elementType: typeof ELEMENT_TYPE_HTML_INLINE;
+    elementType: typeof ELEMENT_TYPE_HTML_BLOCK | typeof ELEMENT_TYPE_HTML_INLINE;
 }
 export interface SvgPortalNode<C extends Component<any> = Component<any>> extends PortalNodeBase<C> {
     element: SVGElement;
     elementType: typeof ELEMENT_TYPE_SVG;
 }
-type AnyPortalNode<C extends Component<any> = Component<any>> = HtmlBlockPortalNode<C> | HtmlInlinePortalNode<C> | SvgPortalNode<C>;
+type AnyPortalNode<C extends Component<any> = Component<any>> = HtmlPortalNode<C> | SvgPortalNode<C>;
 
 
 const validateElementType = (domElement: Element, elementType: ANY_ELEMENT_TYPE) => {
@@ -257,9 +253,9 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
 }
 
 const createHtmlPortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML_BLOCK) as
-    <C extends Component<any> = Component<any>>(options?: Options) => HtmlBlockPortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: Options) => HtmlPortalNode<C>;
 const createHtmlInlinePortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML_INLINE) as
-    <C extends Component<any> = Component<any>>(options?: Options) => HtmlInlinePortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: Options) => HtmlPortalNode<C>;
 const createSvgPortalNode  = createPortalNode.bind(null, ELEMENT_TYPE_SVG) as
     <C extends Component<any> = Component<any>>(options?: Options) => SvgPortalNode<C>;
 
