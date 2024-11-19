@@ -125,7 +125,9 @@ const portalNode = portals.createHtmlPortalNode({
 });
 ```
 
-The div's DOM node is also available at `.element`, so you can mutate that directly with the standard DOM APIs if preferred.
+### `portals.createHtmlInlinePortalNode([options])`
+
+Same as `portal.createHtmlPortalNode`, except it uses `<span>` instead of `<div>`. This can be helpful to avoid invalid HTML when portalling videos, etc into [phrasing content](https://developer.mozilla.org/en-US/docs/Web/HTML/Content_categories#phrasing_content), which is invalid HTML markup and triggers [React validateDOMNesting](https://www.dhiwise.com/post/mastering-validatedomnesting-best-practices).
 
 ### `portals.createSvgPortalNode([options])`
 
