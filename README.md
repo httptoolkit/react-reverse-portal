@@ -119,7 +119,7 @@ This node will contain your portal contents later, and will eventually be attach
 
 An optional options object parameter can be passed to configure the node.
 
-- `options.containerElement` can be set to `'div'` or `'span'` to contigure the detached DOM node container type.
+- `options.containerElement` (default: `div`) can be set to `'span'` to ensure valid HTML (avoid React hydration warnings) when portaling into [phrasing content](https://developer.mozilla.org/en-US/docs/Web/HTML/Content_categories#phrasing_content).
 
 - `options.attributes` can be used to set the HTML attributes (style, class, etc.) of the intermediary, like so:
 
