@@ -128,6 +128,8 @@ An optional options object parameter can be passed to configure the node.
         attributes: { id: "div-1", style: "background-color: #aaf; width: 100px;" }
     });
     ```
+    
+    The detached DOM node is also available at `.element`, so you can mutate that directly with the standard DOM APIs if preferred.
 
 ### `portals.createSvgPortalNode([options])`
 
