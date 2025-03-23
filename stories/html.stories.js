@@ -2,7 +2,7 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 
-import { createHtmlPortalNode, createHtmlInlinePortalNode, InPortal, OutPortal } from '..';
+import { createHtmlPortalNode, InPortal, OutPortal } from '..';
 
 const Container = (props) =>
     <div style={{ "border": "1px solid #222", "padding": "10px" }}>
@@ -290,7 +290,7 @@ storiesOf('Portals', module)
         });
     })
     .add('can render inline portal', () => {
-        const portalNode = createHtmlInlinePortalNode();
+        const portalNode = createHtmlPortalNode({ containerElement: 'span' });
 
         return <div>
             <p>

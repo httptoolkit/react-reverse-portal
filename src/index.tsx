@@ -8,9 +8,19 @@ const ELEMENT_TYPE_SVG  = 'svg';
 
 type ANY_ELEMENT_TYPE = typeof ELEMENT_TYPE_HTML_BLOCK | typeof ELEMENT_TYPE_HTML_INLINE | typeof ELEMENT_TYPE_SVG;
 
-type Options = {
-    attributes: { [key: string]: string };
+type BaseOptions = {
+    attributes?: { [key: string]: string };
 };
+
+type HtmlOptions = BaseOptions & {
+    containerElement?: typeof ELEMENT_TYPE_HTML_BLOCK | typeof ELEMENT_TYPE_HTML_INLINE;
+};
+
+type SvgOptions = BaseOptions & {
+    containerElement?: typeof ELEMENT_TYPE_SVG;
+};
+
+type Options = HtmlOptions | SvgOptions;
 
 // ReactDOM can handle several different namespaces, but they're not exported publicly
 // https://github.com/facebook/react/blob/b87aabdfe1b7461e7331abb3601d9e6bb27544bc/packages/react-dom/src/shared/DOMNamespaces.js#L8-L10
@@ -63,9 +73,10 @@ const validateElementType = (domElement: Element, elementType: ANY_ELEMENT_TYPE)
 
 // This is the internal implementation: the public entry points set elementType to an appropriate value
 const createPortalNode = <C extends Component<any>>(
-    elementType: ANY_ELEMENT_TYPE,
+    defaultElementType: ANY_ELEMENT_TYPE,
     options?: Options
 ): AnyPortalNode<C> => {
+    const elementType = options?.containerElement ?? defaultElementType;
     let initialProps = {} as ComponentProps<C>;
 
     let parent: Node | undefined;
@@ -85,7 +96,7 @@ const createPortalNode = <C extends Component<any>>(
             throw new Error(`Invalid element type "${elementType}" for createPortalNode: must be "div", "span" or "svg".`);
     }
 
-    if (options && typeof options === "object") {
+    if (options && typeof options === "object" && options.attributes) {
         for (const [key, value] of Object.entries(options.attributes)) {
             element.setAttribute(key, value);
         }
@@ -253,15 +264,12 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
 }
 
 const createHtmlPortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML_BLOCK) as
-    <C extends Component<any> = Component<any>>(options?: Options) => HtmlPortalNode<C>;
-const createHtmlInlinePortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML_INLINE) as
-    <C extends Component<any> = Component<any>>(options?: Options) => HtmlPortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: HtmlOptions) => HtmlPortalNode<C>;
 const createSvgPortalNode  = createPortalNode.bind(null, ELEMENT_TYPE_SVG) as
-    <C extends Component<any> = Component<any>>(options?: Options) => SvgPortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: SvgOptions) => SvgPortalNode<C>;
 
 export {
     createHtmlPortalNode,
-    createHtmlInlinePortalNode,
     createSvgPortalNode,
     InPortal,
     OutPortal,

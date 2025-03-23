@@ -115,19 +115,19 @@ How does it work under the hood?
 
 This creates a detached DOM node, with a little extra functionality attached to allow transmitting props later on.
 
-This node will contain your portal contents later, within a `<div>`, and will eventually be attached in the target location.
+This node will contain your portal contents later, and will eventually be attached in the target location.
 
-An optional options object parameter can be passed to configure the node. The only supported option is `attributes`: this can be used to set the HTML attributes (style, class, etc.) of the intermediary, like so:
+An optional options object parameter can be passed to configure the node.
 
-```javascript
-const portalNode = portals.createHtmlPortalNode({
-	attributes: { id: "div-1", style: "background-color: #aaf; width: 100px;" }
-});
-```
+- `options.containerElement` can be set to `'div'` or `'span'` to contigure the detached DOM node container type.
 
-### `portals.createHtmlInlinePortalNode([options])`
+- `options.attributes` can be used to set the HTML attributes (style, class, etc.) of the intermediary, like so:
 
-Same as `portal.createHtmlPortalNode`, except it uses `<span>` instead of `<div>`. This can be helpful to avoid invalid HTML when portalling videos, etc into [phrasing content](https://developer.mozilla.org/en-US/docs/Web/HTML/Content_categories#phrasing_content), which is invalid HTML markup and triggers [React validateDOMNesting](https://www.dhiwise.com/post/mastering-validatedomnesting-best-practices).
+    ```javascript
+    const portalNode = portals.createHtmlPortalNode({
+        attributes: { id: "div-1", style: "background-color: #aaf; width: 100px;" }
+    });
+    ```
 
 ### `portals.createSvgPortalNode([options])`
 
