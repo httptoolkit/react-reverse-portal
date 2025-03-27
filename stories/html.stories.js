@@ -310,41 +310,41 @@ storiesOf('Portals', module)
         const portalNode = createHtmlPortalNode({ containerElement: "tr" });
 
         return React.createElement(() => {
-        const [useFirstTable, setUseFirstTable] = React.useState(true);
+            const [useFirstTable, setUseFirstTable] = React.useState(true);
 
-        return (
-            <div>
-            <InPortal node={portalNode}>
-                <td>Cell 1</td>
-                <td>Cell 2</td>
-                <td>Cell 3</td>
-            </InPortal>
+            return (
+                <div>
+                <InPortal node={portalNode}>
+                    <td>Cell 1</td>
+                    <td>Cell 2</td>
+                    <td>Cell 3</td>
+                </InPortal>
 
-            <button onClick={() => setUseFirstTable(!useFirstTable)}>
-                Move row to {useFirstTable ? "second" : "first"} table
-            </button>
+                <button onClick={() => setUseFirstTable(!useFirstTable)}>
+                    Move row to {useFirstTable ? "second" : "first"} table
+                </button>
 
-            <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
-                <table border="1">
-                <thead>
-                    <tr>
-                    <th colSpan="3">First Table</th>
-                    </tr>
-                </thead>
-                <tbody>{useFirstTable && <OutPortal node={portalNode} />}</tbody>
-                </table>
+                <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+                    <table border="1">
+                    <thead>
+                        <tr>
+                        <th colSpan="3">First Table</th>
+                        </tr>
+                    </thead>
+                    <tbody>{useFirstTable && <OutPortal node={portalNode} />}</tbody>
+                    </table>
 
-                <table border="1">
-                <thead>
-                    <tr>
-                    <th colSpan="3">Second Table</th>
-                    </tr>
-                </thead>
-                <tbody>{!useFirstTable && <OutPortal node={portalNode} />}</tbody>
-                </table>
-            </div>
-            </div>
-        );
+                    <table border="1">
+                    <thead>
+                        <tr>
+                        <th colSpan="3">Second Table</th>
+                        </tr>
+                    </thead>
+                    <tbody>{!useFirstTable && <OutPortal node={portalNode} />}</tbody>
+                    </table>
+                </div>
+                </div>
+            );
         });
     })
     .add('Example from README', () => {
