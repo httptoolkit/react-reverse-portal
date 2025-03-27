@@ -133,7 +133,7 @@ An optional options object parameter can be passed to configure the node.
 
 ### `portals.createSvgPortalNode([options])`
 
-This creates a detached SVG DOM node. It works identically to the node from `createHtmlPortalNode`, except it will work with SVG elements. Content is placed within a `<g>` instead of a `<div>`.
+This creates a detached SVG DOM node. It works identically to the node from `createHtmlPortalNode`, except it will work with SVG elements. Content is placed within a `<g>` instead of a `<div>` by default, which can be customized by `options.containerElement`.
 
 An error will be thrown if you attempt to use a HTML node for SVG content, or a SVG node for HTML content.
 
