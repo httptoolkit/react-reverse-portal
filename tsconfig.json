@@ -8,7 +8,8 @@
         "strict": true,
         "rootDir": "./src",
         "declaration": true,
-        "declarationDir": "./dist"
+        "declarationDir": "./dist",
+        "noFallthroughCasesInSwitch": true
     },
     "include": [
         "./src/**/*.tsx"

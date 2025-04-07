@@ -115,21 +115,25 @@ How does it work under the hood?
 
 This creates a detached DOM node, with a little extra functionality attached to allow transmitting props later on.
 
-This node will contain your portal contents later, within a `<div>`, and will eventually be attached in the target location.
+This node will contain your portal contents later, and will eventually be attached in the target location.
 
-An optional options object parameter can be passed to configure the node. The only supported option is `attributes`: this can be used to set the HTML attributes (style, class, etc.) of the intermediary, like so:
+An optional options object parameter can be passed to configure the node.
 
-```javascript
-const portalNode = portals.createHtmlPortalNode({
-	attributes: { id: "div-1", style: "background-color: #aaf; width: 100px;" }
-});
-```
+- `options.containerElement` (default: `div`) can be set to `'span'` to ensure valid HTML (avoid React hydration warnings) when portaling into [phrasing content](https://developer.mozilla.org/en-US/docs/Web/HTML/Content_categories#phrasing_content).
 
-The div's DOM node is also available at `.element`, so you can mutate that directly with the standard DOM APIs if preferred.
+- `options.attributes` can be used to set the HTML attributes (style, class, etc.) of the intermediary, like so:
+
+    ```javascript
+    const portalNode = portals.createHtmlPortalNode({
+        attributes: { id: "div-1", style: "background-color: #aaf; width: 100px;" }
+    });
+    ```
+    
+    The detached DOM node is also available at `.element`, so you can mutate that directly with the standard DOM APIs if preferred.
 
 ### `portals.createSvgPortalNode([options])`
 
-This creates a detached SVG DOM node. It works identically to the node from `createHtmlPortalNode`, except it will work with SVG elements. Content is placed within a `<g>` instead of a `<div>`.
+This creates a detached SVG DOM node. It works identically to the node from `createHtmlPortalNode`, except it will work with SVG elements. Content is placed within a `<g>` instead of a `<div>` by default, which can be customized by `options.containerElement`.
 
 An error will be thrown if you attempt to use a HTML node for SVG content, or a SVG node for HTML content.
 

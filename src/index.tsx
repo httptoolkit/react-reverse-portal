@@ -5,11 +5,19 @@ import * as ReactDOM from 'react-dom';
 const ELEMENT_TYPE_HTML = 'html';
 const ELEMENT_TYPE_SVG  = 'svg';
 
-type ANY_ELEMENT_TYPE = typeof ELEMENT_TYPE_HTML | typeof ELEMENT_TYPE_SVG;
-
-type Options = {
-    attributes: { [key: string]: string };
+type BaseOptions = {
+    attributes?: { [key: string]: string };
 };
+
+type HtmlOptions = BaseOptions & {
+    containerElement?: keyof HTMLElementTagNameMap;
+};
+
+type SvgOptions = BaseOptions & {
+    containerElement?: keyof SVGElementTagNameMap;
+};
+
+type Options = HtmlOptions | SvgOptions;
 
 // ReactDOM can handle several different namespaces, but they're not exported publicly
 // https://github.com/facebook/react/blob/b87aabdfe1b7461e7331abb3601d9e6bb27544bc/packages/react-dom/src/shared/DOMNamespaces.js#L8-L10
@@ -43,23 +51,25 @@ export interface SvgPortalNode<C extends Component<any> = Component<any>> extend
 type AnyPortalNode<C extends Component<any> = Component<any>> = HtmlPortalNode<C> | SvgPortalNode<C>;
 
 
-const validateElementType = (domElement: Element, elementType: ANY_ELEMENT_TYPE) => {
+const validateElementType = (domElement: Element, elementType: typeof ELEMENT_TYPE_HTML | typeof ELEMENT_TYPE_SVG) => {
     const ownerDocument = (domElement.ownerDocument ?? document) as any;
     // Cast document to `any` because Typescript doesn't know about the legacy `Document.parentWindow` field, and also
     // doesn't believe `Window.HTMLElement`/`Window.SVGElement` can be used in instanceof tests.
     const ownerWindow = ownerDocument.defaultView ?? ownerDocument.parentWindow ?? window; // `parentWindow` for IE8 and earlier
-    if (elementType === ELEMENT_TYPE_HTML) {
-        return domElement instanceof ownerWindow.HTMLElement;
+
+    switch (elementType) {
+        case ELEMENT_TYPE_HTML:
+            return domElement instanceof ownerWindow.HTMLElement;
+        case ELEMENT_TYPE_SVG:
+            return domElement instanceof ownerWindow.SVGElement;
+        default:
+            throw new Error(`Unrecognized element type "${elementType}" for validateElementType.`);
     }
-    if (elementType === ELEMENT_TYPE_SVG) {
-        return domElement instanceof ownerWindow.SVGElement;
-    }
-    throw new Error(`Unrecognized element type "${elementType}" for validateElementType.`);
 };
 
 // This is the internal implementation: the public entry points set elementType to an appropriate value
 const createPortalNode = <C extends Component<any>>(
-    elementType: ANY_ELEMENT_TYPE,
+    elementType: typeof ELEMENT_TYPE_HTML | typeof ELEMENT_TYPE_SVG,
     options?: Options
 ): AnyPortalNode<C> => {
     let initialProps = {} as ComponentProps<C>;
@@ -68,15 +78,19 @@ const createPortalNode = <C extends Component<any>>(
     let lastPlaceholder: Node | undefined;
 
     let element;
-    if (elementType === ELEMENT_TYPE_HTML) {
-        element= document.createElement('div');
-    } else if (elementType === ELEMENT_TYPE_SVG){
-        element= document.createElementNS(SVG_NAMESPACE, 'g');
-    } else {
-        throw new Error(`Invalid element type "${elementType}" for createPortalNode: must be "html" or "svg".`);
+
+    switch (elementType) {
+        case ELEMENT_TYPE_HTML:
+            element = document.createElement(options?.containerElement ?? 'div');
+            break;
+        case ELEMENT_TYPE_SVG:
+            element = document.createElementNS(SVG_NAMESPACE, options?.containerElement ?? 'g');
+            break;
+        default:
+            throw new Error(`Invalid element type "${elementType}" for createPortalNode: must be "html" or "svg".`);
     }
 
-    if (options && typeof options === "object") {
+    if (options && typeof options === "object" && options.attributes) {
         for (const [key, value] of Object.entries(options.attributes)) {
             element.setAttribute(key, value);
         }
@@ -186,7 +200,7 @@ type OutPortalProps<C extends Component<any>> = {
 
 class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalProps<C>> {
 
-    private placeholderNode = React.createRef<HTMLDivElement>();
+    private placeholderNode = React.createRef<HTMLElement>();
     private currentPortalNode?: AnyPortalNode<C>;
 
     constructor(props: OutPortalProps<C>) {
@@ -236,15 +250,24 @@ class OutPortal<C extends Component<any>> extends React.PureComponent<OutPortalP
     render() {
         // Render a placeholder to the DOM, so we can get a reference into
         // our location in the DOM, and swap it out for the portaled node.
-        // A <div> placeholder works fine even for SVG.
-        return <div ref={this.placeholderNode} />;
+        const tagName = this.props.node.element.tagName;
+
+        // SVG tagName is lowercase and case sensitive, HTML is uppercase and case insensitive.
+        // React.createElement expects lowercase first letter to treat as non-component element.
+        // (Passing uppercase type won't break anything, but React warns otherwise:)
+        // https://github.com/facebook/react/blob/8039f1b2a05d00437cd29707761aeae098c80adc/CHANGELOG.md?plain=1#L1984
+        const type = this.props.node.elementType === ELEMENT_TYPE_HTML
+            ? tagName.toLowerCase()
+            : tagName;
+
+        return React.createElement(type, { ref: this.placeholderNode });
     }
 }
 
 const createHtmlPortalNode = createPortalNode.bind(null, ELEMENT_TYPE_HTML) as
-    <C extends Component<any> = Component<any>>(options?: Options) => HtmlPortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: HtmlOptions) => HtmlPortalNode<C>;
 const createSvgPortalNode  = createPortalNode.bind(null, ELEMENT_TYPE_SVG) as
-    <C extends Component<any> = Component<any>>(options?: Options) => SvgPortalNode<C>;
+    <C extends Component<any> = Component<any>>(options?: SvgOptions) => SvgPortalNode<C>;
 
 export {
     createHtmlPortalNode,

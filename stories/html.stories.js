@@ -2,7 +2,7 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 
-import { createHtmlPortalNode, createSvgPortalNode, InPortal, OutPortal } from '..';
+import { createHtmlPortalNode, InPortal, OutPortal } from '..';
 
 const Container = (props) =>
     <div style={{ "border": "1px solid #222", "padding": "10px" }}>
@@ -287,6 +287,64 @@ storiesOf('Portals', module)
 
                 <text>{!hasAttrOption ? `const portalNode = createHtmlPortalNode();` : `const portalNode = createHtmlPortalNode({ attributes: { id: "div-id-1", style: "background-color: #aaf; width: 204px;" } });`}</text>
             </div>
+        });
+    })
+    .add('portal container element as span in paragraph', () => {
+        const portalNode = createHtmlPortalNode({ containerElement: 'span' });
+
+        return <div>
+            <p>
+                Portal defined here:
+                <InPortal node={portalNode}>
+                    Hi!
+                </InPortal>
+            </p>
+
+            <p>
+                Portal renders here:
+                <OutPortal node={portalNode} />
+            </p>
+        </div>;
+    })
+    .add("portal container element as tr", () => {
+        const portalNode = createHtmlPortalNode({ containerElement: "tr" });
+
+        return React.createElement(() => {
+            const [useFirstTable, setUseFirstTable] = React.useState(true);
+
+            return (
+                <div>
+                <InPortal node={portalNode}>
+                    <td>Cell 1</td>
+                    <td>Cell 2</td>
+                    <td>Cell 3</td>
+                </InPortal>
+
+                <button onClick={() => setUseFirstTable(!useFirstTable)}>
+                    Move row to {useFirstTable ? "second" : "first"} table
+                </button>
+
+                <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+                    <table border="1">
+                    <thead>
+                        <tr>
+                        <th colSpan="3">First Table</th>
+                        </tr>
+                    </thead>
+                    <tbody>{useFirstTable && <OutPortal node={portalNode} />}</tbody>
+                    </table>
+
+                    <table border="1">
+                    <thead>
+                        <tr>
+                        <th colSpan="3">Second Table</th>
+                        </tr>
+                    </thead>
+                    <tbody>{!useFirstTable && <OutPortal node={portalNode} />}</tbody>
+                    </table>
+                </div>
+                </div>
+            );
         });
     })
     .add('Example from README', () => {
