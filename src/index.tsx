@@ -164,7 +164,6 @@ const createPortalNode = <C extends Component<any>>(
 interface InPortalProps {
     node: AnyPortalNode;
     children: React.ReactNode;
-    keepMounted: boolean;
 }
 
 class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
