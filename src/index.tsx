@@ -7,6 +7,7 @@ const ELEMENT_TYPE_SVG  = 'svg';
 
 type BaseOptions = {
     attributes?: { [key: string]: string };
+    fallbackMountNode?: React.MutableRefObject<Node>;
 };
 
 type HtmlOptions = BaseOptions & {
@@ -144,6 +145,16 @@ const createPortalNode = <C extends Component<any>>(
                 parent = undefined;
                 lastPlaceholder = undefined;
             }
+
+            if (parent === undefined && options?.fallbackMountNode?.current) {
+                const newParent = options?.fallbackMountNode.current;
+
+                newParent.appendChild(
+                    portalNode.element
+                );
+
+                parent = newParent;
+            }
         }
     } as AnyPortalNode<C>;
 
@@ -153,6 +164,7 @@ const createPortalNode = <C extends Component<any>>(
 interface InPortalProps {
     node: AnyPortalNode;
     children: React.ReactNode;
+    keepMounted: boolean;
 }
 
 class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {

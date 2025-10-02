@@ -426,3 +426,108 @@ export const ExampleFromREADME = () => {
 
     return <MyComponent componentToShow='component-a' />
 };
+
+export const DefaultToFallbackElementWhenNotInUse = () => {
+    const fallbackRef = React.useRef(undefined);
+    const portalNode = React.useMemo(() => createHtmlPortalNode({ fallbackMountNode: fallbackRef }), []);
+    const [showPortal, setShowPortal] = React.useState(true);
+
+    return <div>
+        <div>
+            <InPortal node={portalNode} keepMounted>
+                <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop autoPlay />
+            </InPortal>
+
+            <p>
+                The video below should continue playing in the background toggled.
+            </p>
+
+            <button onClick={() => setShowPortal(!showPortal)}>
+                Click to toggle the OutPortal
+            </button>
+
+            <hr/>
+
+            <h2>Regular OutPortal</h2>
+            <Container>
+                { showPortal === true && <OutPortal node={portalNode} /> }
+            </Container>
+            
+            <h2>Fallback:</h2>
+            <Container>
+                <div ref={fallbackRef}></div>
+            </Container>
+        </div>
+    </div>;
+};
+
+export const PersistPlaybackWhilstDispalyedInAHiddenElement = () => {
+    const fallbackRef = React.useRef(undefined);
+    const portalNode = React.useMemo(() => createHtmlPortalNode({ fallbackMountNode: fallbackRef }), []);
+    const [showPortal, setShowPortal] = React.useState(true);
+
+    return <div>
+        <div ref={fallbackRef} style={{display: 'none'}}></div>
+        <div>
+            <InPortal node={portalNode} keepMounted>
+                <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop autoPlay />
+            </InPortal>
+
+            <p>
+                The video below should continue playing in the background toggled.
+            </p>
+
+            <button onClick={() => setShowPortal(!showPortal)}>
+                Click to toggle the OutPortal
+            </button>
+
+            <hr/>
+
+            <div>
+                { showPortal === true && <OutPortal node={portalNode} /> }
+            </div>
+        </div>
+    </div>;
+};
+
+export const CombineFallbackContainerAndSwitchingBetweenTwoPlaces = () => {
+    const fallbackRef = React.useRef(undefined);
+    const portalNode = React.useMemo(() => createHtmlPortalNode({ fallbackMountNode: fallbackRef }), []);
+    const [showPortal, setShowPortal] = React.useState(true);
+    const [secondPortalSelected, setSecondPortalSelected] = React.useState(true);
+
+    return <div>
+        <div ref={fallbackRef} style={{display: 'none'}}></div>
+        <div>
+            <InPortal node={portalNode} keepMounted>
+                <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop autoPlay />
+            </InPortal>
+
+            <p>
+                The video below should continue playing in the background toggled.
+            </p>
+
+            <button onClick={() => setSecondPortalSelected(!secondPortalSelected)}>
+                Click to switch the OutPortal
+            </button>
+
+            <button onClick={() => setShowPortal(!showPortal)}>
+                Click to toggle the OutPortals
+            </button>
+
+            <hr/>
+
+            { showPortal === true && <div>
+                <Container>
+                    <h2>Portal 1:</h2>
+                    { !secondPortalSelected && <OutPortal node={portalNode} /> }
+                </Container>
+                <Container>
+                    <h2>Portal 2:</h2>
+                    { secondPortalSelected && <OutPortal node={portalNode} /> }
+                </Container>
+            </div> }
+        </div>
+    </div>;
+};
+
