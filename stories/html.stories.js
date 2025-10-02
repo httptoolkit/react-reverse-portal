@@ -408,4 +408,50 @@ storiesOf('Portals', module)
         }
 
         return <MyComponent componentToShow='component-a' />
+    }).add('Events bubbling from PortalOut', () => {
+        const MyExpensiveComponent = () => <div onMouseDown={() => console.log('expensive')}>expensive!</div>;
+
+        const MyComponent = () => {
+            const portalNode = React.useMemo(() => createHtmlPortalNode(), []);
+
+            return <div>
+                {/*
+                    Create the content that you want to move around.
+                    InPortals render as normal, but to detached DOM.
+                    Until this is used MyExpensiveComponent will not
+                    appear anywhere in the page.
+                */}
+                <div onClick={() => alert('InPortal wrapper click event')}>
+                    <InPortal node={portalNode}>
+                        <MyExpensiveComponent
+                            // Optionally provide props to use before this enters the DOM
+                            myProp={"defaultValue"}
+                        />
+                    </InPortal>
+                </div>
+
+                {/* ... The rest of your UI ... */}
+
+                {/* Pass the node to whoever might want to show it: */}
+                <ComponentA portalNode={portalNode} />
+            </div>;
+        }
+
+        const ComponentA = (props) => {
+            return <div
+                onClick={() => alert('OutPortal wrapper click event')}
+                onMouseDown={() => console.log('Mouse Down')}
+                onMouseEnter={() => console.log('Mouse enter')}
+            >
+                {/* ... Some more UI ... */}
+
+                A:
+
+                <OutPortal
+                    node={props.portalNode} // Show the content from this node here
+                />
+            </div>;
+        }
+
+        return <MyComponent componentToShow='component-a' />
     });

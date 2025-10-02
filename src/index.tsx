@@ -39,6 +39,7 @@ interface PortalNodeBase<C extends Component<any>> {
     // If an expected placeholder is provided, only unmount if that's still that was the
     // latest placeholder we replaced. This avoids some race conditions.
     unmount(expectedPlaceholder?: Node): void;
+    
 }
 export interface HtmlPortalNode<C extends Component<any> = Component<any>> extends PortalNodeBase<C> {
     element: HTMLElement;
@@ -177,8 +178,25 @@ class InPortal extends React.PureComponent<InPortalProps, { nodeProps: {} }> {
         this.addPropsChannel();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(previousProps: InPortalProps) {
         this.addPropsChannel();
+        if(previousProps.node.element !== this.props.node.element){
+            Object.keys(window).forEach(key => {
+                if (/^on/.test(key)) {
+                    const eventType = key.slice(2);
+                    this.props.node.element.addEventListener(eventType, this.onEventHandler);
+                    if(previousProps.node.element){
+                        previousProps.node.element.removeEventListener(eventType, this.onEventHandler);
+                    }
+                }
+            });
+
+        }
+    }
+
+    onEventHandler(e:any){
+        e.stopPropagation();
+        this.props.node.element.dispatchEvent(e);
     }
 
     render() {
