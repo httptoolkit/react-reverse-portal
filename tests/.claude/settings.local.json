@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(/dev/null)",
+      "Bash(echo \"Exit code: $?\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
