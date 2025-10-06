@@ -461,7 +461,7 @@ export const DefaultToFallbackElementWhenNotInUse = () => {
     </div>;
 };
 
-export const PersistPlaybackWhilstDispalyedInAHiddenElement = () => {
+export const PersistPlaybackWhilstDisplayedInAHiddenElement = () => {
     const fallbackRef = React.useRef(undefined);
     const portalNode = React.useMemo(() => createHtmlPortalNode({ fallbackMountNode: fallbackRef }), []);
     const [showPortal, setShowPortal] = React.useState(true);
