@@ -428,13 +428,13 @@ export const ExampleFromREADME = () => {
 };
 
 export const DefaultToFallbackElementWhenNotInUse = () => {
-    const fallbackRef = React.useRef(undefined);
+    const fallbackRef = React.useRef<HTMLDivElement>(null);
     const portalNode = React.useMemo(() => createHtmlPortalNode({ fallbackMountNode: fallbackRef }), []);
     const [showPortal, setShowPortal] = React.useState(true);
 
     return <div>
         <div>
-            <InPortal node={portalNode} keepMounted>
+            <InPortal node={portalNode}>
                 <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop autoPlay />
             </InPortal>
 
@@ -462,14 +462,14 @@ export const DefaultToFallbackElementWhenNotInUse = () => {
 };
 
 export const PersistPlaybackWhilstDisplayedInAHiddenElement = () => {
-    const fallbackRef = React.useRef(undefined);
+    const fallbackRef = React.useRef(null);
     const portalNode = React.useMemo(() => createHtmlPortalNode({ fallbackMountNode: fallbackRef }), []);
     const [showPortal, setShowPortal] = React.useState(true);
 
     return <div>
         <div ref={fallbackRef} style={{display: 'none'}}></div>
         <div>
-            <InPortal node={portalNode} keepMounted>
+            <InPortal node={portalNode}>
                 <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop autoPlay />
             </InPortal>
 
@@ -491,7 +491,7 @@ export const PersistPlaybackWhilstDisplayedInAHiddenElement = () => {
 };
 
 export const CombineFallbackContainerAndSwitchingBetweenTwoPlaces = () => {
-    const fallbackRef = React.useRef(undefined);
+    const fallbackRef = React.useRef(null);
     const portalNode = React.useMemo(() => createHtmlPortalNode({ fallbackMountNode: fallbackRef }), []);
     const [showPortal, setShowPortal] = React.useState(true);
     const [secondPortalSelected, setSecondPortalSelected] = React.useState(true);
@@ -499,7 +499,7 @@ export const CombineFallbackContainerAndSwitchingBetweenTwoPlaces = () => {
     return <div>
         <div ref={fallbackRef} style={{display: 'none'}}></div>
         <div>
-            <InPortal node={portalNode} keepMounted>
+            <InPortal node={portalNode}>
                 <video src="https://media.giphy.com/media/l0HlKghz8IvrQ8TYY/giphy.mp4" controls loop autoPlay />
             </InPortal>
 

@@ -7,7 +7,7 @@ const ELEMENT_TYPE_SVG  = 'svg';
 
 type BaseOptions = {
     attributes?: { [key: string]: string };
-    fallbackMountNode?: React.MutableRefObject<Node>;
+    fallbackMountNode?: React.MutableRefObject<Node | null>;
 };
 
 type HtmlOptions = BaseOptions & {
