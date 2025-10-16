@@ -77,6 +77,87 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
     expect(secondTableBodyAfter?.innerHTML).toContain('Cell 2');
     expect(secondTableBodyAfter?.innerHTML).toContain('Cell 3');
   },
+  'PersistComponentStateWhilstMoving': async ({ container, getByText }) => {
+    expect(container.textContent).toContain('Count is 0');
+
+    const incrementButton = getByText('+1');
+    incrementButton.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 1');
+
+    const moveButton = getByText('Click to move the OutPortal');
+    moveButton.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 1');
+
+    incrementButton.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 2');
+  },
+  'CanSetPropsRemotelyWhilstMoving': async ({ container, getAllByText }) => {
+    expect(container.textContent).toContain('Count is 0');
+
+    const counterDiv = container.querySelector('div[style*="background-color"]');
+    expect(counterDiv?.style.backgroundColor).toBe('rgb(170, 255, 170)');
+
+    const incrementButton = counterDiv?.querySelector('button');
+    expect(incrementButton).not.toBeNull();
+    incrementButton!.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 1');
+
+    const moveButtons = getAllByText('Click to move the OutPortal');
+    moveButtons[1].click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 1');
+
+    const counterDivAfter = container.querySelector('div[style*="background-color"]');
+    expect(counterDivAfter?.style.backgroundColor).toBe('rgb(170, 170, 255)');
+
+    const incrementButtonAfter = counterDivAfter?.querySelector('button');
+    incrementButtonAfter!.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 2');
+  },
+  'CanSwitchBetweenPortalsSafely': async ({ container, getByText }) => {
+    expect(container.textContent).toContain('Count is 0');
+
+    const incrementButtons = container.querySelectorAll('button');
+    const incrementButton = Array.from(incrementButtons).find(btn => btn.textContent === '+1');
+    expect(incrementButton).not.toBeNull();
+
+    incrementButton!.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 1');
+
+    const swapButton = getByText('Click to swap the portal shown');
+    swapButton.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 0');
+
+    const incrementButtonAfterSwap = Array.from(container.querySelectorAll('button')).find(
+      btn => btn.textContent === '+1'
+    );
+    incrementButtonAfterSwap!.click();
+    await wait(10);
+    incrementButtonAfterSwap!.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 2');
+
+    swapButton.click();
+    await wait(10);
+
+    expect(container.textContent).toContain('Count is 1');
+  },
 };
 
 // Skipped for now, until we have full test coverage of the stories:
