@@ -38,6 +38,16 @@ const waitForVideoToLoad = (video: HTMLVideoElement): Promise<void> => {
   });
 };
 
+const getSpanOrder = (container: HTMLElement): string[] => {
+  const spans = container.querySelectorAll('span');
+  return Array.from(spans).map(span => span.textContent);
+};
+
+const findButtonByText = (container: HTMLElement, text: string): HTMLButtonElement | undefined => {
+  const buttons = container.querySelectorAll('button');
+  return Array.from(buttons).find(btn => btn.textContent === text) as HTMLButtonElement | undefined;
+};
+
 const storyTests: Record<string, (result: RenderResult) => void | Promise<void>> = {
   'RenderThingsInDifferentPlaces': ({ container }) => {
     expect(container.innerHTML).toContain(
@@ -54,17 +64,13 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
     );
   },
   'SwapNodesBetweenDifferentLocations': async ({ container, getByText }) => {
-    const spans = container.querySelectorAll('span');
-    const order = Array.from(spans).map(span => span.textContent);
-    expect(order).toEqual(['0', '1', '2', '3', '4']);
+    expect(getSpanOrder(container)).toEqual(['0', '1', '2', '3', '4']);
 
     const button = getByText('Click to reverse the order');
     button.click();
     await wait(10);
 
-    const spansAfter = container.querySelectorAll('span');
-    const orderAfter = Array.from(spansAfter).map(span => span.textContent);
-    expect(orderAfter).toEqual(['4', '3', '2', '1', '0']);
+    expect(getSpanOrder(container)).toEqual(['4', '3', '2', '1', '0']);
   },
   'CanPassAttributesOptionToCreateHtmlPortalNode': async ({ container, getByText }) => {
     expect(container.querySelector('#div-id-1')).toBeNull();
@@ -158,8 +164,7 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
   'CanSwitchBetweenPortalsSafely': async ({ container, getByText }) => {
     expect(container.textContent).toContain('Count is 0');
 
-    const incrementButtons = container.querySelectorAll('button');
-    const incrementButton = Array.from(incrementButtons).find(btn => btn.textContent === '+1');
+    const incrementButton = findButtonByText(container, '+1');
     expect(incrementButton).not.toBeNull();
 
     incrementButton!.click();
@@ -173,9 +178,7 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
 
     expect(container.textContent).toContain('Count is 0');
 
-    const incrementButtonAfterSwap = Array.from(container.querySelectorAll('button')).find(
-      btn => btn.textContent === '+1'
-    );
+    const incrementButtonAfterSwap = findButtonByText(container, '+1');
     incrementButtonAfterSwap!.click();
     await wait(10);
     incrementButtonAfterSwap!.click();
