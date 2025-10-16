@@ -18,7 +18,12 @@ export default defineConfig({
       instances: [{
         browser: 'chromium',
         launch: {
-          args: ['--autoplay-policy=no-user-gesture-required']
+          channel: 'chrome',
+          args: [
+            '--autoplay-policy=no-user-gesture-required',
+            '--disable-web-security',
+            '--disable-features=IsolateOrigins,site-per-process'
+          ]
         }
       }]
     },

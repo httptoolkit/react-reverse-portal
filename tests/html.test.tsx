@@ -8,6 +8,36 @@ const allStoryNames = Object.keys(stories).filter(key => key !== 'default');
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+const waitForVideoToLoad = (video: HTMLVideoElement): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Video load timeout after 30s')), 30000);
+
+    const cleanup = () => clearTimeout(timeout);
+
+    if (video.readyState >= 2) {
+      cleanup();
+      resolve();
+      return;
+    }
+
+    const onSuccess = () => {
+      cleanup();
+      resolve();
+    };
+
+    const onError = (e: Event) => {
+      cleanup();
+      reject(new Error(`Video failed to load: ${(e.target as HTMLVideoElement)?.error?.message || 'unknown error'}`));
+    };
+
+    video.addEventListener('loadeddata', onSuccess, { once: true });
+    video.addEventListener('canplay', onSuccess, { once: true });
+    video.addEventListener('error', onError, { once: true });
+
+    video.load();
+  });
+};
+
 const storyTests: Record<string, (result: RenderResult) => void | Promise<void>> = {
   'RenderThingsInDifferentPlaces': ({ container }) => {
     expect(container.innerHTML).toContain(
@@ -184,10 +214,32 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
     expect(valueCounts['3'] + valueCounts['nothing']).toBeGreaterThanOrEqual(2);
     expect(seenValues.size).toBeGreaterThanOrEqual(2);
   },
+  'PersistDOMWhilstMoving': async ({ container, getAllByText }) => {
+    const video = container.querySelector('video') as HTMLVideoElement;
+    expect(video).not.toBeNull();
+    expect(video.src).toContain('giphy.mp4');
+
+    await waitForVideoToLoad(video);
+    await video.play();
+    await wait(200);
+
+    expect(video.paused).toBe(false);
+    const playbackPosition = video.currentTime;
+    expect(playbackPosition).toBeGreaterThan(0);
+
+    const moveButtons = getAllByText('Click to move the OutPortal');
+    moveButtons[0].click();
+    await wait(50);
+
+    const videoAfterMove = container.querySelector('video') as HTMLVideoElement;
+    expect(videoAfterMove).toBe(video);
+    expect(videoAfterMove.paused).toBe(false);
+    expect(videoAfterMove.currentTime).toBeGreaterThanOrEqual(playbackPosition);
+    expect(videoAfterMove.currentTime).toBeGreaterThan(playbackPosition);
+  },
 };
 
-// Skipped for now, until we have full test coverage of the stories:
-test.skip('all stories have tests', () => {
+test('all stories have tests', () => {
   const testedStories = Object.keys(storyTests);
   const untestedStories = allStoryNames.filter(name => !testedStories.includes(name));
 
