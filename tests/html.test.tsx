@@ -158,6 +158,32 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
 
     expect(container.textContent).toContain('Count is 1');
   },
+  'RendersReliablyEvenWithFrequentChangesAndMultiplePortals': async ({ container }) => {
+    const getRenderedValue = () => {
+      const text = container.textContent || '';
+      const match = text.match(/Portal flickers between 2 \/ 3 \/ nothing here:(\d*)/);
+      return match ? (match[1] || 'nothing') : 'nothing';
+    };
+
+    const seenValues = new Set<string>();
+    const valueCounts = { '2': 0, '3': 0, 'nothing': 0 };
+
+    for (let i = 0; i < 50; i++) {
+      await wait(15); // UI code flickers every 10ms
+
+      const value = getRenderedValue();
+      seenValues.add(value);
+      if (value === '2' || value === '3' || value === 'nothing') {
+        valueCounts[value]++;
+      }
+
+      expect(['2', '3', 'nothing']).toContain(value);
+    }
+
+    expect(valueCounts['2']).toBeGreaterThanOrEqual(2);
+    expect(valueCounts['3'] + valueCounts['nothing']).toBeGreaterThanOrEqual(2);
+    expect(seenValues.size).toBeGreaterThanOrEqual(2);
+  },
 };
 
 // Skipped for now, until we have full test coverage of the stories:

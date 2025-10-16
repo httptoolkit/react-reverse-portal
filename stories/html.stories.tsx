@@ -200,7 +200,7 @@ export const RendersReliablyEvenWithFrequentChangesAndMultiplePortals = () => {
         // There should be no other errors though.
         setTimeout(() => {
             setState(!state);
-        }, 100);
+        }, 10);
 
         return <div>
             Portal flickers between 2 / 3 / nothing here:
