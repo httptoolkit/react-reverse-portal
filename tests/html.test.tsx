@@ -100,7 +100,7 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
   'CanSetPropsRemotelyWhilstMoving': async ({ container, getAllByText }) => {
     expect(container.textContent).toContain('Count is 0');
 
-    const counterDiv = container.querySelector('div[style*="background-color"]');
+    const counterDiv = container.querySelector('div[style*="background-color"]') as HTMLElement;
     expect(counterDiv?.style.backgroundColor).toBe('rgb(170, 255, 170)');
 
     const incrementButton = counterDiv?.querySelector('button');
@@ -116,7 +116,7 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
 
     expect(container.textContent).toContain('Count is 1');
 
-    const counterDivAfter = container.querySelector('div[style*="background-color"]');
+    const counterDivAfter = container.querySelector('div[style*="background-color"]') as HTMLElement;
     expect(counterDivAfter?.style.backgroundColor).toBe('rgb(170, 170, 255)');
 
     const incrementButtonAfter = counterDivAfter?.querySelector('button');

@@ -1,9 +1,13 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import checker from 'vite-plugin-checker';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    checker({ typescript: true })
+  ],
   test: {
     include: ['tests/**/*.test.{ts,tsx}'],
     browser: {
@@ -18,6 +22,9 @@ export default defineConfig({
         }
       }]
     },
-    setupFiles: ['.storybook/vitest.setup.ts']
+    setupFiles: ['.storybook/vitest.setup.ts'],
+    typecheck: {
+      enabled: true
+    }
   }
 });
