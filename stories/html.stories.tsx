@@ -253,8 +253,8 @@ export const SwapNodesBetweenDifferentLocations = () => {
                 <span>{ index }</span>
             </InPortal>
           ))}
-          {order.map((position) => (
-            <OutPortal node={nodes[position]} key={position} />
+          {order.map((position, index) => (
+            <OutPortal node={nodes[position]} key={index} />
           ))}
         </div>
       );

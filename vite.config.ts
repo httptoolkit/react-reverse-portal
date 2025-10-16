@@ -12,7 +12,10 @@ export default defineConfig({
       provider: 'playwright',
       screenshotFailures: false,
       instances: [{
-        browser: 'chromium'
+        browser: 'chromium',
+        launch: {
+          args: ['--autoplay-policy=no-user-gesture-required']
+        }
       }]
     },
     setupFiles: ['.storybook/vitest.setup.ts']
