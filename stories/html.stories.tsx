@@ -295,11 +295,11 @@ export const CanPassAttributesOptionToCreateHtmlPortalNode = () => {
             <br/>
             <br/>
 
-            <text>{
+            <pre>{
                 !hasAttrOption
                     ? `const portalNode = createHtmlPortalNode();`
                     : `const portalNode = createHtmlPortalNode({ attributes: { id: "div-id-1", style: "background-color: #aaf; width: 204px;" } });`
-            }</text>
+            }</pre>
         </div>
     });
 };

@@ -24,15 +24,6 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
     );
   },
   'SwapNodesBetweenDifferentLocations': async ({ container, getByText }) => {
-    const html = container.innerHTML;
-    const initialText = container.textContent || '';
-
-    expect(html).toContain('<span>0</span>');
-    expect(html).toContain('<span>1</span>');
-    expect(html).toContain('<span>2</span>');
-    expect(html).toContain('<span>3</span>');
-    expect(html).toContain('<span>4</span>');
-
     const spans = container.querySelectorAll('span');
     const order = Array.from(spans).map(span => span.textContent);
     expect(order).toEqual(['0', '1', '2', '3', '4']);
@@ -44,6 +35,47 @@ const storyTests: Record<string, (result: RenderResult) => void | Promise<void>>
     const spansAfter = container.querySelectorAll('span');
     const orderAfter = Array.from(spansAfter).map(span => span.textContent);
     expect(orderAfter).toEqual(['4', '3', '2', '1', '0']);
+  },
+  'CanPassAttributesOptionToCreateHtmlPortalNode': async ({ container, getByText }) => {
+    expect(container.querySelector('#div-id-1')).toBeNull();
+
+    const divsWithBgColor = Array.from(container.querySelectorAll('div')).filter(div =>
+      div.getAttribute('style')?.includes('background-color: #aaf')
+    );
+    expect(divsWithBgColor).toHaveLength(0);
+
+    const button = getByText('Click to pass attributes option to the intermediary div');
+    button.click();
+    await wait(10);
+
+    const divWithId = container.querySelector('#div-id-1');
+    expect(divWithId).not.toBeNull();
+    expect(divWithId?.getAttribute('style')).toContain('background-color: #aaf');
+    expect(divWithId?.getAttribute('style')).toContain('width: 204px');
+  },
+  'PortalContainerElementAsTr': async ({ container, getByText }) => {
+    const tables = container.querySelectorAll('table');
+    expect(tables).toHaveLength(2);
+
+    const firstTableBody = tables[0].querySelector('tbody');
+    const secondTableBody = tables[1].querySelector('tbody');
+
+    expect(firstTableBody?.innerHTML).toContain('Cell 1');
+    expect(firstTableBody?.innerHTML).toContain('Cell 2');
+    expect(firstTableBody?.innerHTML).toContain('Cell 3');
+    expect(secondTableBody?.innerHTML).not.toContain('Cell 1');
+
+    const button = getByText('Move row to second table');
+    button.click();
+    await wait(10);
+
+    const firstTableBodyAfter = tables[0].querySelector('tbody');
+    const secondTableBodyAfter = tables[1].querySelector('tbody');
+
+    expect(firstTableBodyAfter?.innerHTML).not.toContain('Cell 1');
+    expect(secondTableBodyAfter?.innerHTML).toContain('Cell 1');
+    expect(secondTableBodyAfter?.innerHTML).toContain('Cell 2');
+    expect(secondTableBodyAfter?.innerHTML).toContain('Cell 3');
   },
 };
 
