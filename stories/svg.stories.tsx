@@ -124,11 +124,11 @@ export const CanPassAttributesOptionToCreateSvgPortalNode = () => {
 
             <br/>
 
-            <text>{
+            <pre>{
                 !hasAttrOption
                 ? `const portalNode = createSvgPortalNode();`
                 : `const portalNode = createSvgPortalNode({ attributes: { stroke: "blue" } });`
-            }</text>
+            }</pre>
         </div>
     });
 };
