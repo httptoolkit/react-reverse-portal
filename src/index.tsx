@@ -7,6 +7,7 @@ const ELEMENT_TYPE_SVG  = 'svg';
 
 type BaseOptions = {
     attributes?: { [key: string]: string };
+    fallbackMountNode?: React.MutableRefObject<Node | null>;
 };
 
 type HtmlOptions = BaseOptions & {
@@ -143,6 +144,16 @@ const createPortalNode = <C extends Component<any>>(
 
                 parent = undefined;
                 lastPlaceholder = undefined;
+            }
+
+            if (parent === undefined && options?.fallbackMountNode?.current) {
+                const newParent = options?.fallbackMountNode.current;
+
+                newParent.appendChild(
+                    portalNode.element
+                );
+
+                parent = newParent;
             }
         }
     } as AnyPortalNode<C>;
