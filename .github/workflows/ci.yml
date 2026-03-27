@@ -16,7 +16,7 @@ jobs:
 
       - run: npm install --no-package-lock
       - name: Install Playwright for testing
-        run: npx playwright install
+        run: npx playwright install chromium
 
       - run: npm test
 
